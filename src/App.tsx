@@ -1,13 +1,14 @@
 import React from "react";
-
-import Template from "./components/Template";
+import Home from "./components/Home";
+import "./App.css";
 
 function App() {
-  return (
-    <div>
-      <Template />
-    </div>
-  );
+	return (
+		// <Navbar/>
+		<div className="App">
+			<Home />
+		</div>
+	);
 }
 
 export default App;
