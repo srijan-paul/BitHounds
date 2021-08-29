@@ -1,11 +1,7 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
 import { TezosToolkit } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
-import {
-  NetworkType,
-  BeaconEvent,
-  defaultEventCallbacks
-} from "@airgap/beacon-sdk";
+import { NetworkType, BeaconEvent, defaultEventCallbacks } from "@airgap/beacon-sdk";
 import TransportU2F from "@ledgerhq/hw-transport-u2f";
 import { LedgerSigner } from "@taquito/ledger-signer";
 
@@ -32,9 +28,8 @@ const ConnectButton = ({
   contractAddress,
   setBeaconConnection,
   setPublicToken,
-  wallet
+  wallet,
 }: ButtonProps): JSX.Element => {
-
   const setup = async (userAddress: string): Promise<void> => {
     setUserAddress(userAddress);
     const balance = await Tezos.tz.getBalance(userAddress);
@@ -42,7 +37,7 @@ const ConnectButton = ({
     const contract = await Tezos.wallet.at(contractAddress);
     const storage: any = await contract.storage();
     setContract(contract);
-    setStorage(storage.toNumber());
+    setStorage(storage?.toNumber() || 10);
   };
 
   const connectWallet = async (): Promise<void> => {
@@ -50,8 +45,8 @@ const ConnectButton = ({
       await wallet.requestPermissions({
         network: {
           type: NetworkType.GRANADANET,
-          rpcUrl: "https://api.tez.ie/rpc/granadanet"
-        }
+          rpcUrl: "https://api.tez.ie/rpc/granadanet",
+        },
       });
       const userAddress = await wallet.getPKH();
       await setup(userAddress);
@@ -69,12 +64,12 @@ const ConnectButton = ({
         disableDefaultEvents: true,
         eventHandlers: {
           [BeaconEvent.PAIR_INIT]: {
-            handler: defaultEventCallbacks.PAIR_INIT
+            handler: defaultEventCallbacks.PAIR_INIT,
           },
           [BeaconEvent.PAIR_SUCCESS]: {
-            handler: data => setPublicToken(data.publicKey)
-          }
-        }
+            handler: (data) => setPublicToken(data.publicKey),
+          },
+        },
       });
       Tezos.setWalletProvider(wallet);
       setWallet(wallet);
