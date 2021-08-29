@@ -1,5 +1,4 @@
 import React from "react";
-import Navbar from "./Navbar";
 
 function Hero() {
 	return (
@@ -14,7 +13,6 @@ function Hero() {
 
 				<p className="hero__text__desc">Digital collectible trading cards with beasts inside.</p>
 			</div>
-
 		</div>
 	);
 }
@@ -22,7 +20,6 @@ function Hero() {
 function Home() {
 	return (
 		<div>
-			<Navbar />
 			<Hero />
 		</div>
 	);
