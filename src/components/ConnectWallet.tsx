@@ -1,9 +1,8 @@
 import React, { Dispatch, SetStateAction, useState, useEffect } from "react";
-import { TezosToolkit } from "@taquito/taquito";
+import { TezosToolkit, WalletProvider } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { NetworkType, BeaconEvent, defaultEventCallbacks } from "@airgap/beacon-sdk";
-import TransportU2F from "@ledgerhq/hw-transport-u2f";
-import { LedgerSigner } from "@taquito/ledger-signer";
+import Button from "./Button";
 
 type ButtonProps = {
 	Tezos: TezosToolkit;
@@ -37,10 +36,11 @@ const ConnectButton = ({
 		const contract = await Tezos.wallet.at(contractAddress);
 		const storage: any = await contract.storage();
 		setContract(contract);
-		setStorage(storage?.toNumber() || 10);
+		console.log(storage);
+		setStorage(10);
 	};
 
-	const connectWallet = async (): Promise<void> => {
+	const connectWallet = async () => {
 		try {
 			await wallet.requestPermissions({
 				network: {
@@ -52,7 +52,7 @@ const ConnectButton = ({
 			await setup(userAddress);
 			setBeaconConnection(true);
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 		}
 	};
 
@@ -71,7 +71,7 @@ const ConnectButton = ({
 					},
 				},
 			});
-			Tezos.setWalletProvider();
+			Tezos.setWalletProvider(wallet as unknown as WalletProvider);
 			setWallet(wallet);
 			const activeAccount = await wallet.client.getActiveAccount();
 			if (activeAccount) {
@@ -84,11 +84,9 @@ const ConnectButton = ({
 
 	return (
 		<div className="buttons">
-			<button className="button" onClick={connectWallet}>
-				<span>
-					<i className="fas fa-wallet"></i>&nbsp; Connect with wallet
-				</span>
-			</button>
+			<Button onClick={connectWallet}>
+				<i className="fas fa-wallet"></i>&nbsp; &nbsp; Connect Wallet
+			</Button>
 		</div>
 	);
 };
