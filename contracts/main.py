@@ -7,7 +7,6 @@ class BitHounds(sp.Contract):
         self.breedingDuration = breedingDuration
         self.init(hounds = {}, admin = admin)
 
-    #This EntryPoint is used for new hound creation
     @sp.entry_point
     def create(self, params):
         sp.verify(self.data.admin == sp.sender)
@@ -21,8 +20,7 @@ class BitHounds(sp.Contract):
         hound = self.data.hounds[params.hound1]
         self.checkAvailable(hound, params)
         del hound
-
-    #This EntryPoint is used for Breeding two hounds which are - parent1 and parent2
+        
     @sp.entry_point
     def breed(self, params):
         parent1 = params.parent1
@@ -38,23 +36,18 @@ class BitHounds(sp.Contract):
         hound = self.newHound(params.houndId, breeding, 1 + sp.max(hound1.generation, hound2.generation))
         self.data.hounds[hound.houndId] = hound
 
-        ######################### Trading Part ###############################
-
-    #This EntryPoint is used for selling the hound
     @sp.entry_point
     def sell(self, params):
         sp.verify(sp.mutez(0) <= params.price)
         self.checkAvailable(self.data.hounds[params.houndId], params)
         self.data.hounds[params.houndId].price = params.price
 
-    #This EntryPoint is used if someone wants to lend their hound to another address
     @sp.entry_point
     def lend(self, params):
         sp.verify(sp.mutez(0) <= params.price)
         self.checkAvailable(self.data.hounds[params.houndId], params)
         self.data.hounds[params.houndId].borrowPrice = params.price
 
-    #This EntryPoint is used for trading part
     @sp.entry_point
     def buy(self, params):
         hound = self.data.hounds[params.houndId]
