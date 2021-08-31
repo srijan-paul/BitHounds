@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic&family=Rubik:wght@300;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic&family=Rubik:wght@300;400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Farro:wght@400;500&display=swap");
 
 @import "tailwindcss/base";
@@ -12,6 +12,8 @@
   --clr-bg-2: #edf2f8;
   --clr-faded: #545a8b;
   --clr-primary-300: rgba(41, 40, 40, 0.8);
+  --font-primary: "Farro";
+  --font-secondary: "Rubik";
 }
 
 body {
@@ -28,10 +30,13 @@ body {
 h1 {
   font-weight: bold;
   font-size: 2rem;
+  font-family: var(--font-secondary);
+  font-weight: 400;
 }
 
 p {
-  font-size: 1rem;
+  font-size: 1.1rem;
+  font-family: var(--font-secondary);
 }
 
 @media only screen and (max-width: 650px) {
@@ -40,6 +45,6 @@ p {
   }
 
   p {
-    font-size: 0.8rem;
+    font-size: 1rem;
   }
 }

@@ -28,6 +28,7 @@
 
 .hero__text__desc {
   color: var(--clr-primary-300);
+  font-size: 1.2rem;
 }
 
 .hero__buttons {
@@ -42,8 +43,7 @@
 /* About section */
 
 .aboutContainer {
-  padding: 2rem;
-  background-color: var(--clr-bg-2);
+  background-color: var(--sig-color);
 }
 
 .about {
@@ -53,14 +53,12 @@
   flex-direction: row;
   width: 60%;
   margin: auto;
-  padding-top: 1rem;
   padding-bottom: 2rem;
   border-radius: 12px;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .about__text > h1 {
-  margin-top: 2.5rem;
   margin-bottom: 1rem;
 }
 
@@ -83,14 +81,24 @@
   margin-left: 0.5rem;
 }
 
+#hound-play-ctx {
+  background-color: rgb(200, 213, 241);
+  border-radius: 25px;
+}
+
 .houndPlay__bottom {
   margin: auto;
 }
 
-@media only screen and (max-width: 1180px) {
+@media only screen and (max-width: 900px) {
   .about {
     flex-direction: column;
     width: 95%;
+  }
+
+  .about__text > h1 {
+    text-align: center;
+    font-size: 1.7rem;
   }
 }
 
