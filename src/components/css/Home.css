@@ -42,9 +42,8 @@
 /* About section */
 
 .aboutContainer {
-  margin-top: 4rem;
   padding: 2rem;
-  background-color: #f3f1ee;
+  background-color: var(--clr-bg-2);
 }
 
 .about {
@@ -54,21 +53,23 @@
   flex-direction: row;
   width: 60%;
   margin: auto;
-  gap: 10%;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
+  border-radius: 12px;
+  gap: 1rem;
 }
 
 .about__text > h1 {
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
 }
 
-.about__text > div {
+.about__text p {
   margin: auto;
   color: var(--clr-faded);
 }
 
 .houndPlay {
-  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -89,7 +90,7 @@
 @media only screen and (max-width: 1180px) {
   .about {
     flex-direction: column;
-    width: 90%;
+    width: 95%;
   }
 }
 
