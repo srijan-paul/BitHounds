@@ -1,0 +1,109 @@
+.hero {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.hero__text__title {
+  display: flex;
+  justify-content: center;
+  gap: 0.5%;
+  color: var(--sig-color-2);
+}
+
+.hero__text__title > h1 {
+  font-family: "Farro";
+  font-size: 4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.hero__text__title > img {
+  margin-bottom: 10px;
+  width: 3.8rem;
+}
+
+.hero__text__title > h1 > span {
+  color: var(--sig-color);
+}
+
+.hero__text__desc {
+  color: var(--clr-primary-300);
+}
+
+.hero__buttons {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* About section */
+
+.aboutContainer {
+  margin-top: 4rem;
+  padding: 2rem;
+  background-color: #f3f1ee;
+}
+
+.about {
+  background-color: white;
+  padding: 2rem;
+  display: flex;
+  flex-direction: row;
+  width: 60%;
+  margin: auto;
+  gap: 10%;
+}
+
+.about__text > h1 {
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.about__text > div {
+  margin: auto;
+  color: var(--clr-faded);
+}
+
+.houndPlay {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.houndPlay__top {
+  margin: auto;
+}
+
+.houndPlay__top > canvas {
+  margin-left: 0.5rem;
+}
+
+.houndPlay__bottom {
+  margin: auto;
+}
+
+@media only screen and (max-width: 1180px) {
+  .about {
+    flex-direction: column;
+    width: 90%;
+  }
+}
+
+@media only screen and (max-width: 650px) {
+  .hero__text__desc {
+    width: 70%;
+    margin: auto;
+  }
+
+  .hero__text__title > h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero__text__title > img {
+    width: 2.5rem;
+  }
+}
