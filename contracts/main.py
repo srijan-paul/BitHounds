@@ -10,9 +10,12 @@ class BitHounds(sp.Contract):
     @sp.entry_point
     def create(self, params):
         sp.verify(self.data.admin == sp.sender)
-        sp.verify(params.hound.isNew)
-        sp.set_type(params.hound.houndId, sp.TInt)
-        self.data.hounds[params.hound.houndId] = params.hound
+        sp.set_type(params.houndId, sp.TInt)
+        houndId = params.houndId
+        price = (params.price)
+        owner = params.owner
+        hound = self.createHound(houndId, price, owner)
+        self.data.hounds[hound.houndId] = hound
     
     @sp.entry_point
     def destroy(self, params):
@@ -20,7 +23,7 @@ class BitHounds(sp.Contract):
         hound = self.data.hounds[params.hound1]
         self.checkAvailable(hound, params)
         del hound
-        
+
     @sp.entry_point
     def breed(self, params):
         parent1 = params.parent1
@@ -76,22 +79,22 @@ class BitHounds(sp.Contract):
     def newHound(self, houndId, breeding, generation):
         return sp.record(houndId = houndId, owner = sp.sender, price = sp.mutez(0), isNew = False, auction = sp.timestamp(0), breeding = breeding, generation = generation, borrowPrice = sp.mutez(0))
 
+    def createHound(self, houndId, price, owner):
+        return sp.record(houndId = houndId, owner = owner, price = price, isNew = True, auction = sp.timestamp(0), breeding = sp.timestamp(0), generation = 0, borrowPrice = sp.mutez(0))
+
 @sp.add_test(name = "BitHounds")
 def test():
     admin = sp.test_account("Admin")
     mihir = sp.test_account("Mihir")
     srijan = sp.test_account("Srijan")
-
     c1 = BitHounds(admin.address, newAuctionDuration = 10, breedingDuration = 100)
     scenario  = sp.test_scenario()
     scenario.h1("Bit Hounds")
     scenario += c1
-    def newHound(houndId, price):
-        return sp.record(houndId = houndId, owner = admin.address, price = sp.mutez(price), isNew = True, auction = sp.timestamp(0), breeding = sp.timestamp(0), generation = 0, borrowPrice = sp.mutez(0))
-    c1.create(hound = newHound(0, 10)).run(sender = admin)
-    c1.create(hound = newHound(1, 10)).run(sender = admin)
-    c1.create(hound = newHound(2, 10)).run(sender = admin)
-    c1.create(hound = newHound(3, 10)).run(sender = admin)
+    c1.create(  houndId = 0, price = sp.mutez(5), owner = admin.address).run(sender = admin)
+    c1.create(  houndId = 1, price = sp.mutez(5), owner = admin.address).run(sender = admin)
+    c1.create(  houndId = 2, price = sp.mutez(5), owner = admin.address).run(sender = admin)
+    c1.create(  houndId = 3, price = sp.mutez(5), owner = admin.address).run(sender = admin)
     c1.buy(  houndId = 1, price = sp.mutez(10)).run(sender = mihir, amount = sp.mutez(10))
     c1.buy(  houndId = 2, price = sp.mutez(10)).run(sender = mihir, amount = sp.mutez(10))
     c1.buy(  houndId = 1, price = sp.mutez(11)).run(sender = srijan, amount = sp.mutez(11), now = sp.timestamp(3))
@@ -99,4 +102,4 @@ def test():
     scenario.h2("A bad execution")
     c1.buy(  houndId = 1, price = sp.mutez(20)).run(sender = srijan, amount = sp.mutez(20), now = sp.timestamp(13), valid = False)
     scenario.h2("breeding")
-    c1.breed(borrowPrice = sp.mutez(10), houndId = 4, parent1 = 1, parent2 = 2).run(sender = mihir, now = sp.timestamp(15))
+    c1.breed(   borrowPrice = sp.mutez(10), houndId = 4, parent1 = 1, parent2 = 2).run(sender = mihir, now = sp.timestamp(15))
