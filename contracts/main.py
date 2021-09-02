@@ -9,6 +9,7 @@ class BitHounds(sp.Contract):
 
     @sp.entry_point
     def create(self, params):
+        sp.verify(self.data.admin == sp.sender)
         sp.set_type(params.houndId, sp.TInt)
         houndId = params.houndId
         price = (params.price)
@@ -41,12 +42,16 @@ class BitHounds(sp.Contract):
     @sp.entry_point
     def sell(self, params):
         sp.verify(sp.mutez(0) <= params.price)
+        hound = self.data.hounds[params.hound1]
+        sp.verify(hound.owner == sp.sender)
         self.checkAvailable(self.data.hounds[params.houndId], params)
         self.data.hounds[params.houndId].price = params.price
 
     @sp.entry_point
     def lend(self, params):
         sp.verify(sp.mutez(0) <= params.price)
+        hound = self.data.hounds[params.hound1]
+        sp.verify(hound.owner == sp.sender)
         self.checkAvailable(self.data.hounds[params.houndId], params)
         self.data.hounds[params.houndId].borrowPrice = params.price
 
@@ -90,10 +95,10 @@ def test():
     scenario  = sp.test_scenario()
     scenario.h1("Bit Hounds")
     scenario += c1
-    c1.create(  houndId = 0, price = sp.mutez(5), owner = mihir.address)
-    c1.create(  houndId = 1, price = sp.mutez(5), owner = admin)
-    c1.create(  houndId = 2, price = sp.mutez(5), owner = srijan.address)
-    c1.create(  houndId = 3, price = sp.mutez(5), owner = admin)
+    c1.create(  houndId = 0, price = sp.mutez(5), owner = mihir.address).run(sender = admin)
+    c1.create(  houndId = 1, price = sp.mutez(5), owner = admin).run(sender = admin)
+    c1.create(  houndId = 2, price = sp.mutez(5), owner = srijan.address).run(sender = admin)
+    c1.create(  houndId = 3, price = sp.mutez(5), owner = admin).run(sender = srijan.address, valid = False)
     scenario.h2("Destroying")
     c1.destroy( hound1 = 1, borrowPrice = sp.mutez(10)).run(sender = admin, now = sp.timestamp(1))
     scenario.h2("Destroying - cannot destroy because caller of destroying a particular hound is not one who owns it")
