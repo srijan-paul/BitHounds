@@ -9,14 +9,20 @@ interface UpdateContractProps {
   setStorage: Dispatch<SetStateAction<number>>;
 }
 
-const UpdateContract = ({ contract, setUserBalance, Tezos, userAddress, setStorage }: UpdateContractProps) => {
+const UpdateContract = ({
+  contract,
+  setUserBalance,
+  Tezos,
+  userAddress,
+  setStorage,
+}: UpdateContractProps) => {
   const [loadingIncrement, setLoadingIncrement] = useState<boolean>(false);
   const [loadingDecrement, setLoadingDecrement] = useState<boolean>(false);
 
   const increment = async (): Promise<void> => {
     setLoadingIncrement(true);
     try {
-      const op = await contract.methods.buy(12,15).send();
+      const op = await contract.methods.buy(12, 15).send();
       await op.confirmation();
       const newStorage: any = await contract.storage();
       if (newStorage) setStorage(newStorage.toNumber());

@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic&family=Rubik:wght@300;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic&family=Rubik:wght@300;400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Farro:wght@400;500&display=swap");
 
 @import "tailwindcss/base";
@@ -6,70 +6,45 @@
 @import "tailwindcss/utilities";
 
 :root {
-	--sig-color: #1a73e8;
-	--sig-color-1: #0693e3;
-	--sig-color-2: #1d2d44;
-	--clr-faded: #7379aa;
-	--clr-primary-300: rgba(41, 40, 40, 0.8);
+  --sig-color: #1a73e8;
+  --sig-color-1: #0693e3;
+  --sig-color-2: #1d2d44;
+  --clr-bg-2: #edf2f8;
+  --clr-faded: #545a8b;
+  --clr-primary-300: rgba(41, 40, 40, 0.8);
+  --font-primary: "Farro";
+  --font-secondary: "Rubik";
 }
 
 body {
-	padding: 0;
-	margin: 0;
-	font-family: "Farro", "IBM Plex Sans Arabic", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
-		"Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	color: var(--primary);
-	font-size: 1.2rem;
+  padding: 0;
+  margin: 0;
+  font-family: "Farro", "IBM Plex Sans Arabic", "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--primary);
+  font-size: 1.2rem;
 }
 
-.hero {
-	text-align: center;
-	margin-top: 3rem;
+h1 {
+  font-weight: bold;
+  font-size: 2rem;
+  font-family: var(--font-secondary);
+  font-weight: 400;
 }
 
-.hero__text__title {
-	display: flex;
-	justify-content: center;
-	gap: 0.5%;
-	color: var(--sig-color-2);
-}
-
-.hero__text__title > h1 {
-	font-family: "Farro";
-	font-size: 4rem;
-	font-weight: 600;
-	margin: 0;
-}
-
-.hero__text__title > img {
-	width: 3.8rem;
-}
-
-.hero__text__title > h1 > span {
-	color: var(--sig-color);
-}
-
-.hero__text__desc {
-	color: var(--clr-primary-300);
+p {
+  font-size: 1.1rem;
+  font-family: var(--font-secondary);
 }
 
 @media only screen and (max-width: 650px) {
-	body {
-		font-size: 1rem;
-	}
+  body {
+    font-size: 1rem;
+  }
 
-	.hero__text__desc {
-		width: 70%;
-		margin: auto;
-	}
-
-	.hero__text__title > h1 {
-		font-size: 2.5rem;
-	}
-
-	.hero__text__title > img {
-		width: 2.5rem;
-	}
+  p {
+    font-size: 1rem;
+  }
 }

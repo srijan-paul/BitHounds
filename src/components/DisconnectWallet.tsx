@@ -18,7 +18,7 @@ const DisconnectButton = ({
   setUserBalance,
   setWallet,
   setTezos,
-  setBeaconConnection
+  setBeaconConnection,
 }: ButtonProps): JSX.Element => {
   const disconnectWallet = async (): Promise<void> => {
     setUserAddress("");

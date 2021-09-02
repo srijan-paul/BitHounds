@@ -1,11 +1,13 @@
-import React from 'react'
+import "./css/Button.css";
 
-function Button(props: { text: string }) {
-	return (
-		<div className="btn">
-			{/* TODO */}
-		</div>
-	)
+export default function Button(props: {
+  children: any;
+  onClick?: (_: any) => any;
+  style?: object;
+}) {
+  return (
+    <button className="btn" onClick={props.onClick} style={props.style || {}}>
+      {props.children}
+    </button>
+  );
 }
-
-export default Button

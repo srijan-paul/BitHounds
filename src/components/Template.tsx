@@ -25,7 +25,7 @@ const Template = () => {
   const [storage, setStorage] = useState<number>(0);
   const [copiedPublicToken, setCopiedPublicToken] = useState<boolean>(false);
   const [beaconConnection, setBeaconConnection] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("transfer");
+  // const [activeTab, setActiveTab] = useState<string>("transfer");
 
   const contractAddress: string = "KT1WpkbcHe3UzVpwn95cqWuav8aPMR73bW6p";
 
@@ -129,18 +129,18 @@ const Template = () => {
           <div id="content">
             <p>Test</p>
           </div>
-          <ConnectButton
-            Tezos={Tezos}
-            setContract={setContract}
-            setPublicToken={setPublicToken}
-            setWallet={setWallet}
-            setUserAddress={setUserAddress}
-            setUserBalance={setUserBalance}
-            setStorage={setStorage}
-            contractAddress={contractAddress}
-            setBeaconConnection={setBeaconConnection}
-            wallet={wallet}
-          />
+          {/* <ConnectButton
+						Tezos={Tezos}
+						setContract={setContract}
+						setPublicToken={setPublicToken}
+						setWallet={setWallet}
+						setUserAddress={setUserAddress}
+						setUserBalance={setUserBalance}
+						setStorage={setStorage}
+						contractAddress={contractAddress}
+						setBeaconConnection={setBeaconConnection}
+						wallet={wallet}
+					/> */}
         </div>
       </div>
     );
