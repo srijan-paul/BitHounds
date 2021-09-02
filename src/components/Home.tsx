@@ -1,9 +1,10 @@
 import { TezosToolkit } from "@taquito/taquito";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import ConnectButton from "./ConnectWallet";
 import { getHoundRenderer } from "./scripts/generate-hounds";
 import "./css/Home.css";
+import { SVGSlantTop, SVGSlantBottom } from "./svgs";
 
 function ConnectWallet() {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
@@ -65,9 +66,9 @@ type CanvasBounds = {
 };
 
 function HoundPlay() {
-  const [renderToCanvas, setRenderer] = useState<() => void>(() => () => {
-    console.log(":(");
-  });
+  const [renderToCanvas, setRenderer] = useState<() => void>(
+    () => () => console.error("Render functions not loaded yet.")
+  );
 
   const [canvasBounds] = useState<CanvasBounds>({ width: 200, height: 200 });
 
@@ -79,9 +80,7 @@ function HoundPlay() {
         ctx.imageSmoothingEnabled = false;
 
         const renderHound = await getHoundRenderer();
-        setRenderer(() => () => {
-          renderHound(ctx, canvasBounds.width, canvasBounds.height);
-        });
+        setRenderer(() => () => renderHound(ctx, canvasBounds.width, canvasBounds.height));
         renderHound(ctx, canvasBounds.width, canvasBounds.height);
       } catch (e) {
         console.error(e);
@@ -129,20 +128,14 @@ function AboutGame() {
   );
 }
 
-function Home() {
+function Home(): JSX.Element {
   return (
     <div>
       <Hero />
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-          <path fill="#1a73e8" fill-opacity="1" d="M0,256L1440,192L1440,320L0,320Z"></path>
-        </svg>
-      </svg>
 
+      <SVGSlantTop />
       <AboutGame />
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 220">
-        <path fill="#1a73e8" fill-opacity="1" d="M0,160L1440,64L1440,0L0,0Z"></path>
-      </svg>
+      <SVGSlantBottom />
     </div>
   );
 }

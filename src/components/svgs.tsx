@@ -1,7 +1,8 @@
 // We have to use SVG props here instead of direct SVGs because the css `fill` and `color` properties don't
 // work on SVGs that are loaded via `import` or `require`.
+import React from "react";
 
-export function Book(props: { size: string }) {
+export function Book(props: { size: string }): JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +21,7 @@ export function Book(props: { size: string }) {
   );
 }
 
-export function Code(props: { size: string }) {
+export function Code(props: { size: string }): JSX.Element {
   return (
     <svg width={props.size} viewBox="0 0 19 13" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <title>code [#1115]</title>
@@ -44,7 +45,7 @@ export function Code(props: { size: string }) {
   );
 }
 
-export function Dog(props: { size: string }) {
+export function Dog(props: { size: string }): JSX.Element {
   return (
     <svg
       version="1.1"
@@ -69,6 +70,26 @@ export function Dog(props: { size: string }) {
 		L14.6,264z"
         />
       </g>
+    </svg>
+  );
+}
+
+export function SVGSlantTop(props: { color?: string }): JSX.Element {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+      <path
+        fill={props.color || "#1a73e8"}
+        fillOpacity="1"
+        d="M0,256L1440,192L1440,320L0,320Z"
+      ></path>
+    </svg>
+  );
+}
+
+export function SVGSlantBottom(props: { color?: string }): JSX.Element {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 220">
+      <path fill={props.color || "#1a73e8"} fillOpacity="1" d="M0,160L1440,64L1440,0L0,0Z"></path>
     </svg>
   );
 }

@@ -1,7 +1,9 @@
+import React from "react";
+import PropTypes from "prop-types";
 import { Book, Code, Dog } from "./svgs";
 import "./css/Navbar.css";
 
-function NavItem(props: { name: string; children: any }) {
+function NavItem(props: { name: string; children: PropTypes.ReactNodeLike }) {
   return (
     <div className="nav__item">
       {props.children}
@@ -10,7 +12,7 @@ function NavItem(props: { name: string; children: any }) {
   );
 }
 
-function Navbar() {
+function Navbar(): JSX.Element {
   return (
     <div className="navbar">
       <NavItem name="HoundPedia">

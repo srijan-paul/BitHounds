@@ -11,7 +11,7 @@ interface ButtonProps {
   setTezos: Dispatch<SetStateAction<TezosToolkit>>;
   setBeaconConnection: Dispatch<SetStateAction<boolean>>;
 }
-const DisconnectButton = ({
+function DisconnectButton({
   wallet,
   setPublicToken,
   setUserAddress,
@@ -19,8 +19,8 @@ const DisconnectButton = ({
   setWallet,
   setTezos,
   setBeaconConnection,
-}: ButtonProps): JSX.Element => {
-  const disconnectWallet = async (): Promise<void> => {
+}: ButtonProps): JSX.Element {
+  async function disconnectWallet(): Promise<void> {
     setUserAddress("");
     setUserBalance(0);
     setWallet(null);
@@ -34,7 +34,7 @@ const DisconnectButton = ({
       await wallet.client.removeAllPeers();
       await wallet.client.destroy();
     }
-  };
+  }
 
   return (
     <div className="buttons">
@@ -43,6 +43,6 @@ const DisconnectButton = ({
       </button>
     </div>
   );
-};
+}
 
 export default DisconnectButton;
