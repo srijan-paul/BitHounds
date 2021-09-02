@@ -40,11 +40,14 @@ class AssetLoader {
   async load() {
     if (this.parts) return this.parts;
 
-    /// TODO: get rid of the magic number `3`
+    /// TODO: get rid of the magic number `5`
     this.parts = await Promise.all(
       partNames.map((partName) => {
         const pathPrefix = `./assets/parts/${partName}`;
-        const paths = [`${pathPrefix}-1.png`, `${pathPrefix}-2.png`, `${pathPrefix}-3.png`];
+        const paths: string[] = [];
+        for (let i = 1; i <= 5; ++i) {
+          paths.push(`${pathPrefix}-${i}.png`);
+        }
         return loadImages(paths);
       })
     );
@@ -53,7 +56,11 @@ class AssetLoader {
   }
 }
 
-export async function drawRandomHound(ctx: CanvasRenderingContext2D, w: number, h: number): Promise<void> {
+export async function drawRandomHound(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number
+): Promise<void> {
   const parts = await AssetLoader.instance.load();
 
   ctx.clearRect(0, 0, w, h);
