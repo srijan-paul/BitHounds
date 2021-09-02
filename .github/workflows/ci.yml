@@ -9,7 +9,7 @@ on:
 
 jobs:
   Build-and-test:
-    name: Build and run the tests
+    name: Install dependencies and lint project
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
