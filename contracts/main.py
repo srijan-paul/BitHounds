@@ -5,11 +5,10 @@ class BitHounds(sp.Contract):
     def __init__(self, admin, newAuctionDuration, breedingDuration):
         self.newAuctionDuration = newAuctionDuration
         self.breedingDuration = breedingDuration
-        self.init(hounds = {}, admin = admin)
+        self.init(hounds = {}, admin = sp.address("tz1hL8qxynLMqvob6pAUXoeECSSZxDE8HVyg"))
 
     @sp.entry_point
     def create(self, params):
-        sp.verify(self.data.admin == sp.sender)
         sp.set_type(params.houndId, sp.TInt)
         houndId = params.houndId
         price = (params.price)
@@ -19,8 +18,8 @@ class BitHounds(sp.Contract):
     
     @sp.entry_point
     def destroy(self, params):
-        sp.verify(self.data.admin == sp.sender)
         hound = self.data.hounds[params.hound1]
+        sp.verify(hound.owner == sp.sender)
         self.checkAvailable(hound, params)
         del hound
 
@@ -84,17 +83,20 @@ class BitHounds(sp.Contract):
 
 @sp.add_test(name = "BitHounds")
 def test():
-    admin = sp.test_account("Admin")
+    admin = sp.address("tz1hL8qxynLMqvob6pAUXoeECSSZxDE8HVyg")
     mihir = sp.test_account("Mihir")
     srijan = sp.test_account("Srijan")
     c1 = BitHounds(admin.address, newAuctionDuration = 10, breedingDuration = 100)
     scenario  = sp.test_scenario()
     scenario.h1("Bit Hounds")
     scenario += c1
-    c1.create(  houndId = 0, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.create(  houndId = 1, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.create(  houndId = 2, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.create(  houndId = 3, price = sp.mutez(5), owner = admin.address).run(sender = admin)
+    c1.create(  houndId = 0, price = sp.mutez(5), owner = mihir.address)
+    c1.create(  houndId = 1, price = sp.mutez(5), owner = admin)
+    c1.create(  houndId = 2, price = sp.mutez(5), owner = srijan.address)
+    c1.create(  houndId = 3, price = sp.mutez(5), owner = admin)
+    scenario.h2("Destroying")
+    c1.destroy( hound1 = 1, borrowPrice = sp.mutez(10)).run(sender = admin, now = sp.timestamp(1))
+    c1.destroy( hound1 = 3, borrowPrice = sp.mutez(10)).run(sender = admin, now = sp.timestamp(1))
     c1.buy(  houndId = 1, price = sp.mutez(10)).run(sender = mihir, amount = sp.mutez(10))
     c1.buy(  houndId = 2, price = sp.mutez(10)).run(sender = mihir, amount = sp.mutez(10))
     c1.buy(  houndId = 1, price = sp.mutez(11)).run(sender = srijan, amount = sp.mutez(11), now = sp.timestamp(3))
