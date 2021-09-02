@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect } from "react";
 import { TezosToolkit, WalletProvider } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { NetworkType, BeaconEvent, defaultEventCallbacks } from "@airgap/beacon-sdk";
@@ -11,10 +11,10 @@ type ButtonProps = {
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
 
-const ConnectButton = ({ Tezos, setPublicToken, setWalletConnected }: ButtonProps): JSX.Element => {
+function ConnectButton({ Tezos, setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
   const walletInfo = useContext(WalletContext);
 
-  const connectWallet = async () => {
+  async function connectWallet() {
     const wallet = walletInfo.wallet as BeaconWallet;
     try {
       await wallet.requestPermissions({
@@ -31,7 +31,7 @@ const ConnectButton = ({ Tezos, setPublicToken, setWalletConnected }: ButtonProp
       console.error(error);
       setWalletConnected(false);
     }
-  };
+  }
 
   useEffect(() => {
     (async () => {
@@ -44,7 +44,7 @@ const ConnectButton = ({ Tezos, setPublicToken, setWalletConnected }: ButtonProp
             handler: defaultEventCallbacks.PAIR_INIT,
           },
           [BeaconEvent.PAIR_SUCCESS]: {
-            handler: data => setPublicToken(data.publicKey),
+            handler: (data) => setPublicToken(data.publicKey),
           },
         },
       });
@@ -59,7 +59,6 @@ const ConnectButton = ({ Tezos, setPublicToken, setWalletConnected }: ButtonProp
         walletInfo.setAddress(userAddress);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -67,6 +66,6 @@ const ConnectButton = ({ Tezos, setPublicToken, setWalletConnected }: ButtonProp
       <i className="fas fa-wallet"></i>&nbsp; &nbsp; Connect Wallet
     </Button>
   );
-};
+}
 
 export default ConnectButton;

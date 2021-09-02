@@ -1,7 +1,8 @@
 // We have to use SVG props here instead of direct SVGs because the css `fill` and `color` properties don't
 // work on SVGs that are loaded via `import` or `require`.
+import React from "react";
 
-export function Book(props: { size: string }) {
+export function Book(props: { size: string }): JSX.Element {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +21,7 @@ export function Book(props: { size: string }) {
   );
 }
 
-export function Code(props: { size: string }) {
+export function Code(props: { size: string }): JSX.Element {
   return (
     <svg width={props.size} viewBox="0 0 19 13" version="1.1" xmlns="http://www.w3.org/2000/svg">
       <title>code [#1115]</title>
@@ -44,7 +45,7 @@ export function Code(props: { size: string }) {
   );
 }
 
-export function Dog(props: { size: string }) {
+export function Dog(props: { size: string }): JSX.Element {
   return (
     <svg
       version="1.1"

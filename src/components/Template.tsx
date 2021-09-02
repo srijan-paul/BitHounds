@@ -1,23 +1,14 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { TezosToolkit } from "@taquito/taquito";
 import "../App.css";
-import ConnectButton from "./ConnectWallet";
 import DisconnectButton from "./DisconnectWallet";
 import UpdateContract from "./UpdateContract";
 
-const enum BeaconConnection {
-  NONE = "",
-  LISTENING = "Listening to P2P channel",
-  CONNECTED = "Channel connected",
-  PERMISSION_REQUEST_SENT = "Permission request sent, waiting for response",
-  PERMISSION_REQUEST_SUCCESS = "Wallet is connected",
-}
-
-const Template = () => {
+function Template(): JSX.Element {
   const [Tezos, setTezos] = useState<TezosToolkit>(
     new TezosToolkit("https://api.tez.ie/rpc/granadanet")
   );
-  const [contract, setContract] = useState<any>(undefined);
+  const [contract,] = useState<any>(undefined);
   const [publicToken, setPublicToken] = useState<string | null>("");
   const [wallet, setWallet] = useState<any>(null);
   const [userAddress, setUserAddress] = useState<string>("");
@@ -27,7 +18,7 @@ const Template = () => {
   const [beaconConnection, setBeaconConnection] = useState<boolean>(false);
   // const [activeTab, setActiveTab] = useState<string>("transfer");
 
-  const contractAddress: string = "KT1WpkbcHe3UzVpwn95cqWuav8aPMR73bW6p";
+  const contractAddress = "KT1WpkbcHe3UzVpwn95cqWuav8aPMR73bW6p";
 
   if (publicToken && (!userAddress || isNaN(userBalance))) {
     return (
@@ -129,24 +120,12 @@ const Template = () => {
           <div id="content">
             <p>Test</p>
           </div>
-          {/* <ConnectButton
-						Tezos={Tezos}
-						setContract={setContract}
-						setPublicToken={setPublicToken}
-						setWallet={setWallet}
-						setUserAddress={setUserAddress}
-						setUserBalance={setUserBalance}
-						setStorage={setStorage}
-						contractAddress={contractAddress}
-						setBeaconConnection={setBeaconConnection}
-						wallet={wallet}
-					/> */}
         </div>
       </div>
     );
   } else {
     return <div>An error has occurred</div>;
   }
-};
+}
 
 export default Template;

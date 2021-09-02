@@ -1,5 +1,5 @@
 async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const image = new Image();
     image.onload = () => resolve(image);
     image.src = path;
@@ -42,7 +42,7 @@ class AssetLoader {
 
     /// TODO: get rid of the magic number `3`
     this.parts = await Promise.all(
-      partNames.map(partName => {
+      partNames.map((partName) => {
         const pathPrefix = `./assets/parts/${partName}`;
         const paths = [`${pathPrefix}-1.png`, `${pathPrefix}-2.png`, `${pathPrefix}-3.png`];
         return loadImages(paths);
@@ -53,21 +53,23 @@ class AssetLoader {
   }
 }
 
-export async function drawRandomHound(ctx: CanvasRenderingContext2D, w: number, h: number) {
+export async function drawRandomHound(ctx: CanvasRenderingContext2D, w: number, h: number): Promise<void> {
   const parts = await AssetLoader.instance.load();
 
   ctx.clearRect(0, 0, w, h);
-  parts.forEach(partImgs => {
+  parts.forEach((partImgs) => {
     ctx.drawImage(randChoice(partImgs), 0, 0, w, h);
   });
 }
 
+type CanvasRenderFunc = (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
+
 // returns a function that can render hounds on demand
-export async function getHoundRenderer() {
+export async function getHoundRenderer(): Promise<CanvasRenderFunc> {
   const parts = await AssetLoader.instance.load();
   return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
     ctx.clearRect(0, 0, w, h);
-    parts.forEach(partImgs => {
+    parts.forEach((partImgs) => {
       ctx.drawImage(randChoice(partImgs), 0, 0, w, h);
     });
   };
