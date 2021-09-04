@@ -1,12 +1,17 @@
 import { TezosToolkit } from "@taquito/taquito";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import Button from "./Button";
 import ConnectButton from "./ConnectWallet";
 import { getHoundRenderer } from "./scripts/generate-hounds";
 import "./css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "./svgs";
+import { useHistory } from 'react-router-dom';
 
-function ConnectWallet() {
+type TezosProps = {
+    setTezos: Dispatch<SetStateAction<any>>;
+};
+
+const ConnectWallet = ({ setTezos }: TezosProps): JSX.Element => {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
   const [, setPublicToken] = useState<string | null>("");
   const [isWalletConnected, setWalletConnected] = useState<boolean>(false);
@@ -23,6 +28,7 @@ function ConnectWallet() {
   return (
     <ConnectButton
       Tezos={Tezos}
+      setTezos={setTezos}
       setPublicToken={setPublicToken}
       setWalletConnected={setWalletConnected}
     />
@@ -30,15 +36,16 @@ function ConnectWallet() {
 }
 
 function PlayButton() {
+  const history = useHistory();
   return (
-    <Button>
+    <Button onClick={() => history.push("/breed")}>
       <i className="fa fa-play"></i>
       &nbsp; &nbsp; Get Started
     </Button>
   );
 }
 
-function Hero() {
+const Hero = ({ setTezos }: TezosProps): JSX.Element => {
   return (
     <div className="hero">
       <div className="hero__text">
@@ -53,7 +60,7 @@ function Hero() {
       </div>
 
       <div className="hero__buttons">
-        <ConnectWallet />
+        <ConnectWallet setTezos={setTezos} />
         <PlayButton />
       </div>
     </div>
@@ -128,10 +135,10 @@ function AboutGame() {
   );
 }
 
-function Home(): JSX.Element {
+const Home = ({ setTezos }: TezosProps): JSX.Element => {
   return (
     <div>
-      <Hero />
+      <Hero setTezos={setTezos}/>
 
       <SVGSlantTop />
       <AboutGame />

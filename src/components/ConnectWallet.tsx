@@ -7,11 +7,12 @@ import { WalletContext } from "./context/WalletContext";
 
 type ButtonProps = {
   Tezos: TezosToolkit;
+  setTezos: Dispatch<SetStateAction<any>>;
   setPublicToken: Dispatch<SetStateAction<string | null>>;
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
 
-function ConnectButton({ Tezos, setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
+function ConnectButton({ Tezos, setTezos, setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
   const walletInfo = useContext(WalletContext);
 
   async function connectWallet() {
@@ -51,6 +52,7 @@ function ConnectButton({ Tezos, setPublicToken, setWalletConnected }: ButtonProp
 
       // TODO (@srijan): why do I have to cast the wallet twice here?
       Tezos.setWalletProvider(wallet as unknown as WalletProvider);
+      setTezos(Tezos);
 
       walletInfo.setWallet(wallet);
       const activeAccount = await wallet.client.getActiveAccount();
