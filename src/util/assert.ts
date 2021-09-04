@@ -1,6 +1,7 @@
 import { AssertionError } from "assert";
 
-export function assert(cond: any, message?: string) {
+// eslint-disable-next-line
+export function assert(cond: any, message?: string): any{
   if (!cond) throw new AssertionError({ message });
   return cond;
 }
