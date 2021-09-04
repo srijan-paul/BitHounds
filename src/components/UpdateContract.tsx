@@ -1,3 +1,6 @@
+/* eslint-disable react/react-in-jsx-scope */
+/* eslint-disable no-empty */
+/* eslint-disable func-style */
 import { TezosToolkit } from "@taquito/taquito";
 import Button from "./Button";
 
@@ -6,25 +9,25 @@ interface UpdateContractProps {
 }
 
 const UseContract = ({ Tezos }: UpdateContractProps) => {
-    const breed = async (): Promise<void> => {
-        const contract = await Tezos.wallet.at("KT1SqKjicYmm3AE1YJkMurwWS4Y9qjYPzTTf");
-        try {
-            console.log(contract)
-            const op = await contract.methods.add(1, 10).send();
-            await op.confirmation();
-            const newStorage: any = await contract.storage();
-            console.log(newStorage);
-        } catch (error) {
-            console.log(error);
-        } finally {
-        }
-    };
+  const breed = async (): Promise<void> => {
+    const contract = await Tezos.wallet.at("KT1SqKjicYmm3AE1YJkMurwWS4Y9qjYPzTTf");
+    try {
+      console.log(contract);
+      const op = await contract.methods.add(1, 10).send();
+      await op.confirmation();
+      const newStorage: any = await contract.storage();
+      console.log(newStorage);
+    } catch (error) {
+      console.log(error);
+    } finally {
+    }
+  };
   return (
     <div className="buttons">
-          <Button onClick={breed}>
-          <span>
+      <Button onClick={breed}>
+        <span>
             Create
-          </span>
+        </span>
       </Button>
     </div>
   );
@@ -32,11 +35,11 @@ const UseContract = ({ Tezos }: UpdateContractProps) => {
 
 
 const UpdateContract = ({ Tezos }: UpdateContractProps): JSX.Element => {
-    return (
-        <div>
-            <UseContract Tezos={Tezos}/>
-        </div>
-    );
-}
+  return (
+    <div>
+      <UseContract Tezos={Tezos}/>
+    </div>
+  );
+};
 
 export default UpdateContract;

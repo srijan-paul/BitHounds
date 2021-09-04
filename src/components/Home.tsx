@@ -1,3 +1,4 @@
+/* eslint-disable func-style */
 import { TezosToolkit } from "@taquito/taquito";
 import React, { useEffect, useState, Dispatch, SetStateAction } from "react";
 import Button from "./Button";
@@ -5,7 +6,7 @@ import ConnectButton from "./ConnectWallet";
 import { getHoundRenderer } from "./scripts/generate-hounds";
 import "./css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "./svgs";
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
 type TezosProps = {
     setTezos: Dispatch<SetStateAction<any>>;
@@ -33,7 +34,7 @@ const ConnectWallet = ({ setTezos }: TezosProps): JSX.Element => {
       setWalletConnected={setWalletConnected}
     />
   );
-}
+};
 
 function PlayButton() {
   const history = useHistory();
@@ -65,7 +66,7 @@ const Hero = ({ setTezos }: TezosProps): JSX.Element => {
       </div>
     </div>
   );
-}
+};
 
 type CanvasBounds = {
   width: number;
@@ -139,12 +140,11 @@ const Home = ({ setTezos }: TezosProps): JSX.Element => {
   return (
     <div>
       <Hero setTezos={setTezos}/>
-
       <SVGSlantTop />
       <AboutGame />
       <SVGSlantBottom />
     </div>
   );
-}
+};
 
 export default Home;
