@@ -2,7 +2,7 @@ import { TezosToolkit } from "@taquito/taquito";
 import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import ConnectButton from "./ConnectWallet";
-import { getHoundRenderer } from "./scripts/generate-hounds";
+import { getRandomHoundRenderer } from "../scripts/generate-hounds";
 import "./css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "./svgs";
 
@@ -79,7 +79,7 @@ function HoundPlay() {
         const ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
         ctx.imageSmoothingEnabled = false;
 
-        const renderHound = await getHoundRenderer();
+        const renderHound = await getRandomHoundRenderer();
         setRenderer(() => () => renderHound(ctx, canvasBounds.width, canvasBounds.height));
         renderHound(ctx, canvasBounds.width, canvasBounds.height);
       } catch (e) {

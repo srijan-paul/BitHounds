@@ -11,6 +11,7 @@ interface ButtonProps {
   setTezos: Dispatch<SetStateAction<TezosToolkit>>;
   setBeaconConnection: Dispatch<SetStateAction<boolean>>;
 }
+
 function DisconnectButton({
   wallet,
   setPublicToken,

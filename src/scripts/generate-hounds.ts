@@ -1,3 +1,6 @@
+import { assert } from "../util/assert";
+import { decodeBase62Quadlet } from "./hound-genome";
+
 async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
     const image = new Image();
@@ -5,6 +8,8 @@ async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
     image.src = path;
   });
 }
+
+const MaxTextureCount = 5;
 
 // Returns a random integer
 function randInt(lo: number, hi: number) {
@@ -40,12 +45,11 @@ class AssetLoader {
   async load() {
     if (this.parts) return this.parts;
 
-    /// TODO: get rid of the magic number `5`
     this.parts = await Promise.all(
       partNames.map((partName) => {
         const pathPrefix = `./assets/parts/${partName}`;
         const paths: string[] = [];
-        for (let i = 1; i <= 5; ++i) {
+        for (let i = 1; i <= MaxTextureCount; ++i) {
           paths.push(`${pathPrefix}-${i}.png`);
         }
         return loadImages(paths);
@@ -72,7 +76,7 @@ export async function drawRandomHound(
 type CanvasRenderFunc = (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
 
 // returns a function that can render hounds on demand
-export async function getHoundRenderer(): Promise<CanvasRenderFunc> {
+export async function getRandomHoundRenderer(): Promise<CanvasRenderFunc> {
   const parts = await AssetLoader.instance.load();
   return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
     ctx.clearRect(0, 0, w, h);
@@ -80,4 +84,20 @@ export async function getHoundRenderer(): Promise<CanvasRenderFunc> {
       ctx.drawImage(randChoice(partImgs), 0, 0, w, h);
     });
   };
+}
+
+// converts a number decoded from the Genome quadlet into an index that can be used
+// to look up the `parts.<body-part>` array.
+const MaxQuadLetValue = decodeBase62Quadlet("ZZZZ");
+export function genomeNumberToImageIndex(base10Quadlet: number): number {
+  assert(base10Quadlet >= 0 && base10Quadlet <= MaxQuadLetValue);
+  for (let i = 0; i < MaxQuadLetValue; ++i) {
+    if (
+      base10Quadlet >= (i / 5) * MaxQuadLetValue &&
+      base10Quadlet < ((i + 1) / 5) * MaxQuadLetValue
+    ) {
+      return i;
+    }
+  }
+  throw new Error(`Impossible quadlet: ${base10Quadlet}`);
 }
