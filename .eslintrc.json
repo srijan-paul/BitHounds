@@ -24,7 +24,7 @@
     "semi": ["error", "always"],
     "eol-last": ["warn", "always"],
     "arrow-parens": ["warn", "always"],
-    "func-style": ["ignore", "declaration"],
+    "func-style": ["off", "declaration"],
     "@typescript-eslint/no-explicit-any": "off"
   }
 }
