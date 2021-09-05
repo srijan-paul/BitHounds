@@ -6,4 +6,8 @@ describe("Map quadlet to asset index", () => {
     const maxQuadlet = decodeBase62Quadlet("ZZZZ");
     expect(genomeNumberToImageIndex(maxQuadlet / 5)).toBe(1);
   });
+
+  it("rejects bad numbers", () => {
+    expect(() => genomeNumberToImageIndex(decodeBase62Quadlet("ZZZZ") + 10)).toThrow();
+  });
 });

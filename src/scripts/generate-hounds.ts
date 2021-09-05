@@ -91,10 +91,10 @@ export async function getRandomHoundRenderer(): Promise<CanvasRenderFunc> {
 const MaxQuadLetValue = decodeBase62Quadlet("ZZZZ");
 export function genomeNumberToImageIndex(base10Quadlet: number): number {
   assert(base10Quadlet >= 0 && base10Quadlet <= MaxQuadLetValue);
-  for (let i = 0; i < MaxQuadLetValue; ++i) {
+  for (let i = 0; i < MaxTextureCount; ++i) {
     if (
-      base10Quadlet >= (i / 5) * MaxQuadLetValue &&
-      base10Quadlet < ((i + 1) / 5) * MaxQuadLetValue
+      base10Quadlet >= (i / MaxTextureCount) * MaxQuadLetValue &&
+      base10Quadlet < ((i + 1) / MaxTextureCount) * MaxQuadLetValue
     ) {
       return i;
     }
