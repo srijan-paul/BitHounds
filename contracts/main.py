@@ -119,4 +119,3 @@ def test():
     c1.createHound(hound = (newHound("0KJh1qxznoPSoIYacvyBAlfYmd14lsvQ4QzvLk2I", 1))).run(sender = mark)
     c1.breed(sp.record(parent1 = sp.nat(0),parent2=sp.nat(1))).run(sender = mark)
     c1.breed(sp.record(parent1 = sp.nat(0),parent2=sp.nat(1))).run(sender = mark)
-    
