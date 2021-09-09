@@ -58,17 +58,17 @@ class Hound(sp.Contract):
 
     @sp.entry_point
     def createHound(self, params):
-        sp.set_type(params.hound.generation, sp.TInt)
-        sp.set_type(params.hound.genome, sp.TString)
+        sp.set_type(params.generation, sp.TInt)
+        sp.set_type(params.genome, sp.TString)
         token_contract = sp.contract(sp.TRecord(creator = sp.TAddress, metadata = sp.TMap(sp.TString, sp.TBytes),token_id = sp.TNat ), self.data.contract_address, entry_point = "mint").open_some()
         sp.transfer(sp.record(creator = sp.sender, token_id = self.data.counter, metadata = FA2.FA2_token_metadata.make_metadata(
         decimals = 0,
         name = 'Hound NFT',
         symbol = 'Hound'
         )), sp.mutez(0), token_contract)
-        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.hound.genome, isNew = True, timestamp = params.hound.timestamp, generation = params.hound.generation)
+        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.genome, isNew = True, timestamp = params.timestamp, generation = params.generation)
         self.data.counter+=1
-    
+
     @sp.entry_point
     def breed(self, params):
         sp.verify(params.parent1!=params.parent2)
@@ -112,10 +112,7 @@ def test():
     c1 = Hound(nft.address)
     scenario += c1  
 
-    def newHound(genome,  generation):
-        return sp.record(genome = genome, timestamp = 1343, generation = generation)
-
-    c1.createHound(hound = (newHound("8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", 0))).run(sender = mark)
-    c1.createHound(hound = (newHound("0KJh1qxznoPSoIYacvyBAlfYmd14lsvQ4QzvLk2I", 1))).run(sender = mark)
-    c1.breed(sp.record(parent1 = sp.nat(0),parent2=sp.nat(1))).run(sender = mark)
-    c1.breed(sp.record(parent1 = sp.nat(0),parent2=sp.nat(1))).run(sender = mark)
+    c1.createHound(genome = "8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", generation = 0, timestamp = 1324).run(sender = mark)
+    c1.createHound(genome = "0KJh1qxznoPSoIYacvyBAlfYmd14lsvQ4QzvLk2I", generation = 1, timestamp = 1532).run(sender = mark)
+    c1.breed(sp.record(parent1 = 0, parent2 = 1)).run(sender = mark)
+    c1.breed(sp.record(parent1 = 1 , parent2= 2)).run(sender = mark)
