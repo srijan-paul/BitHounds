@@ -71,17 +71,17 @@ class Hound(sp.Contract):
     
     @sp.entry_point
     def breed(self, params):
-        sp.verify(params.p1!=params.p2)
-        sp.set_type(params.p1, sp.TNat)
-        sp.set_type(params.p2, sp.TNat)
-        g1 = self.data.hounds[params.p1].genome
-        g2 = self.data.hounds[params.p2].genome
-        gen1 = self.data.hounds[params.p1].generation
-        gen2 = self.data.hounds[params.p2].generation
+        sp.verify(params.parent1!=params.parent2)
+        sp.set_type(params.parent1, sp.TNat)
+        sp.set_type(params.parent2, sp.TNat)
+        g1 = self.data.hounds[params.parent1].genome
+        g2 = self.data.hounds[params.parent2].genome
+        gen1 = self.data.hounds[params.parent1].generation
+        gen2 = self.data.hounds[params.parent2].generation
         genc = 1 + sp.max(gen1, gen2)
         gc = sp.string("")
         random.seed(int(time.time()))
-        for i in range(0,20,4):
+        for i in range(0,40,4):
             isP = random.randint(0,1)
             if isP == 0:
                 gc += sp.slice(g1, i, 4).open_some()
@@ -104,7 +104,7 @@ class Hound(sp.Contract):
 def test():
     admin = sp.address("tz1bm9dFuBnSzTzgZKuHjJsFfrPfdkVgj1PW")
     mark = sp.test_account("Mark")
-    elon = sp.test_account("Elon")
+    bill = sp.test_account("Bill")
     scenario  = sp.test_scenario()
     scenario.h1("Hounds")
     nft = NFT(FA2.FA2_config(non_fungible = True), admin = admin, metadata = sp.big_map({"": sp.utils.bytes_of_string("tezos-storage:content"),"content": sp.utils.bytes_of_string("""{"name" : "Hound", "author": "Test", "status": "Dev"}""")}))
@@ -115,7 +115,8 @@ def test():
     def newHound(genome,  generation):
         return sp.record(genome = genome, timestamp = 1343, generation = generation)
 
-    c1.createHound(hound = (newHound("abcdefghijklmnopqrst", 0))).run(sender = mark)
-    c1.createHound(hound = (newHound("12345678910111213456", 1))).run(sender = mark)
-    c1.breed(sp.record(p1 = sp.nat(0),p2=sp.nat(1))).run(sender = mark)
-    c1.breed(sp.record(p1 = sp.nat(0),p2=sp.nat(1))).run(sender = mark)
+    c1.createHound(hound = (newHound("8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", 0))).run(sender = mark)
+    c1.createHound(hound = (newHound("0KJh1qxznoPSoIYacvyBAlfYmd14lsvQ4QzvLk2I", 1))).run(sender = mark)
+    c1.breed(sp.record(parent1 = sp.nat(0),parent2=sp.nat(1))).run(sender = mark)
+    c1.breed(sp.record(parent1 = sp.nat(0),parent2=sp.nat(1))).run(sender = mark)
+    
