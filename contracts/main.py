@@ -1,105 +1,121 @@
 #BitHounds - A decentralized trading card game
 import smartpy as sp
+import time
+import random
+FA2 = sp.io.import_template("FA2.py")
 
-class BitHounds(sp.Contract):
-    def __init__(self, admin, newAuctionDuration, breedingDuration):
-        self.newAuctionDuration = newAuctionDuration
-        self.breedingDuration = breedingDuration
-        self.init(hounds = {}, admin = admin)
+class NFT(FA2.FA2):
 
     @sp.entry_point
-    def create(self, params):
-        sp.verify(self.data.admin == sp.sender)
-        sp.set_type(params.houndId, sp.TInt)
-        houndId = params.houndId
-        price = (params.price)
-        owner = params.owner
-        hound = self.createHound(houndId, price, owner)
-        self.data.hounds[hound.houndId] = hound
+    def mint(self, params):
+        if self.config.non_fungible:
+            sp.verify(
+                ~ self.token_id_set.contains(self.data.all_tokens, params.token_id),
+                message = "NFT-asset: cannot mint twice same token"
+            )
+        user = self.ledger_key.make(params.creator, params.token_id)
+        self.token_id_set.add(self.data.all_tokens, params.token_id)
+        sp.if self.data.ledger.contains(user):
+            self.data.ledger[user].balance += 1
+        sp.else:
+            self.data.ledger[user] = FA2.Ledger_value.make(1)
+        sp.if self.data.token_metadata.contains(params.token_id):
+            if self.config.store_total_supply:
+                self.data.total_supply[params.token_id] = 1
+        sp.else:
+            self.data.token_metadata[params.token_id] = sp.record(
+                token_id    = params.token_id,
+                token_info  = params.metadata
+            )
+            if self.config.store_total_supply:
+                self.data.total_supply[params.token_id] = 1
+
+    @sp.entry_point
+    def single_transfer(self, params):
+        current_from = params.from_
+        if self.config.single_asset:
+            sp.verify(params.token_id == 0, message = "single-asset: token-id <> 0")
+        sp.verify(
+            self.data.token_metadata.contains(params.token_id),
+            message = self.error_message.token_undefined()
+        )
+        from_user = self.ledger_key.make(current_from, params.token_id)
+        sp.verify(
+            (self.data.ledger[from_user].balance >= 1),
+            message = self.error_message.insufficient_balance())
+        to_user = self.ledger_key.make(params.to_, params.token_id)
+        self.data.ledger[from_user].balance = sp.as_nat(
+            self.data.ledger[from_user].balance - 1)
+        sp.if self.data.ledger.contains(to_user):
+            self.data.ledger[to_user].balance += 1
+        sp.else:
+                self.data.ledger[to_user] = FA2.Ledger_value.make(1)
+                
+
+class Hound(sp.Contract):
+    def __init__(self, contract_address):
+        self.init(hounds = {},counter = 0, contract_address = contract_address)
+
+    @sp.entry_point
+    def createHound(self, params):
+        sp.set_type(params.hound.generation, sp.TInt)
+        sp.set_type(params.hound.genome, sp.TString)
+        token_contract = sp.contract(sp.TRecord(creator = sp.TAddress, metadata = sp.TMap(sp.TString, sp.TBytes),token_id = sp.TNat ), self.data.contract_address, entry_point = "mint").open_some()
+        sp.transfer(sp.record(creator = sp.sender, token_id = self.data.counter, metadata = FA2.FA2_token_metadata.make_metadata(
+        decimals = 0,
+        name = 'Hound NFT',
+        symbol = 'Hound'
+        )), sp.mutez(0), token_contract)
+        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.hound.genome, isNew = True, timestamp = params.hound.timestamp, generation = params.hound.generation)
+        self.data.counter+=1
     
     @sp.entry_point
-    def destroy(self, params):
-        sp.verify(self.data.admin == sp.sender)
-        hound = self.data.hounds[params.hound1]
-        self.checkAvailable(hound, params)
-        del hound
-
-    @sp.entry_point
     def breed(self, params):
-        parent1 = params.parent1
-        parent2 = params.parent2
-        hound1 = self.data.hounds[parent1]
-        hound2 = self.data.hounds[parent2]
-        sp.verify(parent1 != parent2)
-        self.checkAvailable(hound1, params)
-        self.checkAvailable(hound2, params, hound2.owner != sp.sender)
-        breeding = sp.now.add_seconds(self.breedingDuration)
-        hound1.breeding = breeding
-        hound2.breeding = breeding
-        hound = self.newHound(params.houndId, breeding, 1 + sp.max(hound1.generation, hound2.generation))
-        self.data.hounds[hound.houndId] = hound
+        sp.verify(params.p1!=params.p2)
+        sp.set_type(params.p1, sp.TNat)
+        sp.set_type(params.p2, sp.TNat)
+        g1 = self.data.hounds[params.p1].genome
+        g2 = self.data.hounds[params.p2].genome
+        gen1 = self.data.hounds[params.p1].generation
+        gen2 = self.data.hounds[params.p2].generation
+        genc = 1 + sp.max(gen1, gen2)
+        gc = sp.string("")
+        random.seed(int(time.time()))
+        for i in range(0,20,4):
+            isP = random.randint(0,1)
+            if isP == 0:
+                gc += sp.slice(g1, i, 4).open_some()
+            elif isP == 1:
+                gc += sp.slice(g2, i, 4).open_some()
 
-    @sp.entry_point
-    def sell(self, params):
-        sp.verify(sp.mutez(0) <= params.price)
-        self.checkAvailable(self.data.hounds[params.houndId], params)
-        self.data.hounds[params.houndId].price = params.price
+        token_contract = sp.contract(sp.TRecord(creator = sp.TAddress, metadata = sp.TMap(sp.TString, sp.TBytes),token_id = sp.TNat ), self.data.contract_address, entry_point = "mint").open_some()
+        sp.transfer(sp.record(creator = sp.sender, token_id = self.data.counter, metadata = FA2.FA2_token_metadata.make_metadata(
+        decimals = 0,
+        name = 'Hound NFT',
+        symbol = 'Hound'
+        )), sp.mutez(0), token_contract)
+        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = gc, isNew = True, timestamp = 1923, generation = genc)
+        self.data.counter+=1
 
-    @sp.entry_point
-    def lend(self, params):
-        sp.verify(sp.mutez(0) <= params.price)
-        self.checkAvailable(self.data.hounds[params.houndId], params)
-        self.data.hounds[params.houndId].borrowPrice = params.price
+    
 
-    @sp.entry_point
-    def buy(self, params):
-        hound = self.data.hounds[params.houndId]
-        sp.verify(sp.mutez(0) < hound.price)
-        sp.verify(hound.price <= params.price)
-        sp.verify(sp.amount == params.price)
-        sp.send(hound.owner, params.price)
-        hound.owner = sp.sender
-        sp.if hound.isNew:
-            hound.isNew = False
-            hound.auction = sp.now.add_seconds(self.newAuctionDuration)
-        sp.verify(sp.now <= hound.auction)
-        sp.if sp.now <= hound.auction:
-            hound.price = params.price + sp.mutez(1)
 
-    def checkAvailable(self, hound, params, borrow = False):
-        sp.if borrow:
-            sp.verify(sp.mutez(0) < hound.borrowPrice)
-            borrowPrice = params.borrowPrice
-            sp.verify(hound.borrowPrice < borrowPrice)
-            sp.verify(sp.amount == borrowPrice)
-            sp.send(hound.owner, borrowPrice)
-        sp.verify(hound.auction < sp.now)
-        sp.verify(hound.breeding < sp.now)
-
-    def newHound(self, houndId, breeding, generation):
-        return sp.record(houndId = houndId, owner = sp.sender, price = sp.mutez(0), isNew = False, auction = sp.timestamp(0), breeding = breeding, generation = generation, borrowPrice = sp.mutez(0))
-
-    def createHound(self, houndId, price, owner):
-        return sp.record(houndId = houndId, owner = owner, price = price, isNew = True, auction = sp.timestamp(0), breeding = sp.timestamp(0), generation = 0, borrowPrice = sp.mutez(0))
-
-@sp.add_test(name = "BitHounds")
+@sp.add_test(name = "Test Hounds")
 def test():
-    admin = sp.test_account("Admin")
-    mihir = sp.test_account("Mihir")
-    srijan = sp.test_account("Srijan")
-    c1 = BitHounds(admin.address, newAuctionDuration = 10, breedingDuration = 100)
+    admin = sp.address("tz1bm9dFuBnSzTzgZKuHjJsFfrPfdkVgj1PW")
+    mark = sp.test_account("Mark")
+    elon = sp.test_account("Elon")
     scenario  = sp.test_scenario()
-    scenario.h1("Bit Hounds")
-    scenario += c1
-    c1.create(  houndId = 0, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.create(  houndId = 1, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.create(  houndId = 2, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.create(  houndId = 3, price = sp.mutez(5), owner = admin.address).run(sender = admin)
-    c1.buy(  houndId = 1, price = sp.mutez(10)).run(sender = mihir, amount = sp.mutez(10))
-    c1.buy(  houndId = 2, price = sp.mutez(10)).run(sender = mihir, amount = sp.mutez(10))
-    c1.buy(  houndId = 1, price = sp.mutez(11)).run(sender = srijan, amount = sp.mutez(11), now = sp.timestamp(3))
-    c1.buy(  houndId = 1, price = sp.mutez(15)).run(sender = mihir, amount = sp.mutez(15), now = sp.timestamp(9))
-    scenario.h2("A bad execution")
-    c1.buy(  houndId = 1, price = sp.mutez(20)).run(sender = srijan, amount = sp.mutez(20), now = sp.timestamp(13), valid = False)
-    scenario.h2("breeding")
-    c1.breed(   borrowPrice = sp.mutez(10), houndId = 4, parent1 = 1, parent2 = 2).run(sender = mihir, now = sp.timestamp(15))
+    scenario.h1("Hounds")
+    nft = NFT(FA2.FA2_config(non_fungible = True), admin = admin, metadata = sp.big_map({"": sp.utils.bytes_of_string("tezos-storage:content"),"content": sp.utils.bytes_of_string("""{"name" : "Hound", "author": "Test", "status": "Dev"}""")}))
+    scenario += nft
+    c1 = Hound(nft.address)
+    scenario += c1  
+
+    def newHound(genome,  generation):
+        return sp.record(genome = genome, timestamp = 1343, generation = generation)
+
+    c1.createHound(hound = (newHound("abcdefghijklmnopqrst", 0))).run(sender = mark)
+    c1.createHound(hound = (newHound("12345678910111213456", 1))).run(sender = mark)
+    c1.breed(sp.record(p1 = sp.nat(0),p2=sp.nat(1))).run(sender = mark)
+    c1.breed(sp.record(p1 = sp.nat(0),p2=sp.nat(1))).run(sender = mark)
