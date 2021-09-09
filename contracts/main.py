@@ -74,19 +74,19 @@ class Hound(sp.Contract):
         sp.verify(params.parent1!=params.parent2)
         sp.set_type(params.parent1, sp.TNat)
         sp.set_type(params.parent2, sp.TNat)
-        g1 = self.data.hounds[params.parent1].genome
-        g2 = self.data.hounds[params.parent2].genome
+        genome1 = self.data.hounds[params.parent1].genome
+        genome2 = self.data.hounds[params.parent2].genome
         gen1 = self.data.hounds[params.parent1].generation
         gen2 = self.data.hounds[params.parent2].generation
-        genc = 1 + sp.max(gen1, gen2)
-        gc = sp.string("")
+        genChild = 1 + sp.max(gen1, gen2)
+        genomeChild = sp.string("")
         random.seed(int(time.time()))
         for i in range(0,40,4):
-            isP = random.randint(0,1)
-            if isP == 0:
-                gc += sp.slice(g1, i, 4).open_some()
-            elif isP == 1:
-                gc += sp.slice(g2, i, 4).open_some()
+            whichParent = random.randint(0,1)
+            if whichParent == 0:
+                genomeChild += sp.slice(genome1, i, 4).open_some()
+            elif whichParent == 1:
+                genomeChild += sp.slice(genome2, i, 4).open_some()
 
         token_contract = sp.contract(sp.TRecord(creator = sp.TAddress, metadata = sp.TMap(sp.TString, sp.TBytes),token_id = sp.TNat ), self.data.contract_address, entry_point = "mint").open_some()
         sp.transfer(sp.record(creator = sp.sender, token_id = self.data.counter, metadata = FA2.FA2_token_metadata.make_metadata(
@@ -94,7 +94,7 @@ class Hound(sp.Contract):
         name = 'Hound NFT',
         symbol = 'Hound'
         )), sp.mutez(0), token_contract)
-        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = gc, isNew = True, timestamp = 1923, generation = genc)
+        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = genomeChild, isNew = True, timestamp = 1923, generation = genChild)
         self.data.counter+=1
 
     
