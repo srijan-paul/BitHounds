@@ -1,5 +1,5 @@
 import { assert } from "../util/assert";
-import { decodeBase62Quadlet } from "./hound-genome";
+import { decodeBase62Quadlet, decodeGenome } from "./hound-genome";
 
 async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
@@ -47,7 +47,7 @@ class AssetLoader {
 
     this.parts = await Promise.all(
       partNames.map((partName) => {
-        const pathPrefix = `./assets/parts/${partName}`;
+        const pathPrefix = `/assets/parts/${partName}`;
         const paths: string[] = [];
         for (let i = 1; i <= MaxTextureCount; ++i) {
           paths.push(`${pathPrefix}-${i}.png`);
@@ -73,7 +73,7 @@ export async function drawRandomHound(
   });
 }
 
-type CanvasRenderFunc = (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
+export type CanvasRenderFunc = (ctx: CanvasRenderingContext2D, w: number, h: number) => void;
 
 // returns a function that can render hounds on demand
 export async function getRandomHoundRenderer(): Promise<CanvasRenderFunc> {
@@ -100,4 +100,25 @@ export function genomeNumberToImageIndex(base10Quadlet: number): number {
     }
   }
   throw new Error(`Impossible quadlet: ${base10Quadlet}`);
+}
+
+export async function getRendererFromGenome(genome: string): Promise<CanvasRenderFunc> {
+  const parts = await AssetLoader.instance.load();
+  const genomeQuadlets = decodeGenome(genome);
+
+  const partImages: HTMLImageElement[] = [];
+
+  partNames.forEach((name, i) => {
+    const partIdx = genomeNumberToImageIndex(genomeQuadlets[name]);
+    assert(i >= 0 && i < parts.length);
+    assert(partIdx >= 0 && partIdx < parts[i].length);
+    partImages.push(parts[i][partIdx]);
+  });
+
+  return (ctx: CanvasRenderingContext2D, w: number, h: number) => {
+    ctx.clearRect(0, 0, w, h);
+    partImages.forEach((img) => {
+      ctx.drawImage(img, 0, 0, w, h);
+    });
+  };
 }

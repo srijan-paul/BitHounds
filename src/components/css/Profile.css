@@ -9,6 +9,7 @@
   text-align: left;
   display: flex;
   gap: 1.4rem;
+  margin-bottom: 2.2rem;
 }
 
 .profileHeader__left__pic {
@@ -51,7 +52,12 @@
 /* Hound list */
 
 .houndList {
+  column-count: 4;
+}
 
+.houndCanvas {
+  background-color: rgb(200, 213, 241);
+  border-radius: 25px;
 }
 
 @media only screen and (max-width: 650px) {
