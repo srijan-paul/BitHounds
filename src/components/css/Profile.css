@@ -1,0 +1,79 @@
+.userProfile {
+  width: 50%;
+  margin: auto;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.profileHeader {
+  text-align: left;
+  display: flex;
+  gap: 1.4rem;
+}
+
+.profileHeader__left__pic {
+  width: 120px;
+  margin-bottom: 1rem;
+}
+
+.profileHeader__left__pic > img {
+  border-radius: 50%;
+}
+
+.profileHeader__left__address {
+  font-size: small;
+  text-align: center;
+  transition-duration: 300ms;
+}
+
+.profileHeader__left__address:hover {
+  cursor: pointer;
+  color: var(--sig-color);
+}
+
+.profileHeader__right {
+  padding: 0.5rem;
+  font-size: medium;
+  text-align: left;
+  color: var(--clr-faded);
+}
+
+.profileHeader__right__name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: black;
+}
+
+.profileHeader__right__description {
+  font-size: 0.9rem;
+}
+
+/* Hound list */
+
+.houndList {
+
+}
+
+@media only screen and (max-width: 650px) {
+  .userProfile {
+    width: 90%;
+  }
+
+  .profileHeader {
+    flex-direction: column;
+  }
+
+  .profileHeader__right__name {
+    font-size: 1.2rem;
+  }
+
+  .profileHeader__right {
+    text-align: center;
+  }
+
+  .profileHeader__left__pic {
+    width: 100px;
+    margin: auto;
+    margin-bottom: 1rem;
+  }
+}

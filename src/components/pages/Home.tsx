@@ -1,10 +1,11 @@
 import { TezosToolkit } from "@taquito/taquito";
 import React, { useEffect, useState } from "react";
-import Button from "./Button";
-import ConnectButton from "./ConnectWallet";
-import { getRandomHoundRenderer } from "../scripts/generate-hounds";
-import "./css/Home.css";
-import { SVGSlantTop, SVGSlantBottom } from "./svgs";
+import Button from "../Button";
+import ConnectButton from "../ConnectWallet";
+import { getRandomHoundRenderer } from "../../scripts/generate-hounds";
+import "../css/Home.css";
+import { SVGSlantTop, SVGSlantBottom } from "../svgs";
+import { Link } from "react-router-dom";
 
 function ConnectWallet() {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
@@ -31,10 +32,12 @@ function ConnectWallet() {
 
 function PlayButton() {
   return (
-    <Button>
-      <i className="fa fa-play"></i>
-      &nbsp; &nbsp; Get Started
-    </Button>
+    <Link to="/usr/sad7qw79duo">
+      <Button>
+        <i className="fa fa-play"></i>
+        &nbsp; &nbsp; Get Started
+      </Button>
+    </Link>
   );
 }
 
