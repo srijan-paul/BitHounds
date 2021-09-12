@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Book, Code, Dog } from "./svgs";
+import { Book, Code, Dog, User } from "./svgs";
 import "./css/Navbar.css";
 
 function NavItem(props: { name: string; children: PropTypes.ReactNodeLike }) {
@@ -25,6 +25,10 @@ function Navbar(): JSX.Element {
 
       <NavItem name="Source">
         <Code size="30px" />
+      </NavItem>
+
+      <NavItem name="Profile">
+        <User size="35px"/>
       </NavItem>
     </div>
   );

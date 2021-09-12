@@ -3,10 +3,22 @@ import { assert } from "../util/assert";
 // maps a Hound's feature to it's corresponding number in the Genome.
 // eg: mouth -> 1202
 export type HoundGenomeData = {
-  mouth: number;
-  horn: number;
-  base: number;
-  eyes: number;
+  [key: string]: number;
+};
+
+export const enum HoundRarity {
+  COMMON = "common",
+  UNCOMMON = "uncommon",
+  RARE = "rare",
+  MYTHICAL = "mythical",
+}
+
+export type HoundInfo = {
+  nick: string;
+  generation: number;
+  id: number;
+  genome: string;
+  rarity: HoundRarity;
 };
 
 export function decodeBase62Quadlet(quadlet: string): number {
