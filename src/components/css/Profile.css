@@ -2,7 +2,9 @@
   width: 50%;
   margin: auto;
   margin-top: 3rem;
+  margin-bottom: 3rem;
   text-align: center;
+  font-family: "Rubik";
 }
 
 .profileHeader {
@@ -52,17 +54,35 @@
 /* Hound list */
 
 .houndList {
-  column-count: 4;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-column-gap: 3rem;
+  grid-row-gap: 1.5rem;
+  /* gap: 1.5rem; */
+  padding: 2rem 0rem;
 }
 
-.houndCanvas {
-  background-color: rgb(200, 213, 241);
-  border-radius: 25px;
+.houndList > .houndCard {
+  transition: margin 0.1s ease-out;
+  -webkit-transition: margin 0.1s ease-out;
+  -moz-transition: margin 0.1s ease-out;
+  -o-transition: margin 0.1s ease-out;
+}
+
+.houndList > .houndCard:hover {
+  cursor: pointer;
+  margin-top: -1rem;
+}
+
+@media only screen and (max-width: 800px) {
+  .userProfile {
+    width: 90%;
+  }
 }
 
 @media only screen and (max-width: 650px) {
   .userProfile {
-    width: 90%;
+    width: 95%;
   }
 
   .profileHeader {

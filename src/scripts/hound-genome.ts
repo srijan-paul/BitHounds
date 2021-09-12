@@ -6,6 +6,21 @@ export type HoundGenomeData = {
   [key: string]: number;
 };
 
+export const enum HoundRarity {
+  COMMON = "common",
+  UNCOMMON = "uncommon",
+  RARE = "rare",
+  MYTHICAL = "mythical",
+}
+
+export type HoundInfo = {
+  nick: string;
+  generation: number;
+  id: number;
+  genome: string;
+  rarity: HoundRarity;
+};
+
 export function decodeBase62Quadlet(quadlet: string): number {
   assert(quadlet.length == 4, "expected a string of length 4");
 
