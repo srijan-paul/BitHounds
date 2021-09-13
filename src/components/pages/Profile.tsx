@@ -1,13 +1,25 @@
+import { TezosToolkit } from "@taquito/taquito";
 import React from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
-import { HoundInfo, HoundRarity } from "../../scripts/hound-genome";
+import { HoundInfo} from "../../scripts/hound-genome";
 import "../css/Profile.css";
 import HoundCard from "../HoundCard";
+import UpdateContract from "../UpdateContract";
 
 // Wallet addresses can be too long for us to render them fully, so
 // we only render a substring.
 const MaxAddressLen = 12;
+
+type TezosProps = {
+  Tezos: TezosToolkit;
+  hounds: HoundInfo[];
+};
+
+type Hound = {
+  hounds: HoundInfo[];
+};
+
 
 function ProfileHeader({ address }: { address: string }): JSX.Element {
   return (
@@ -23,7 +35,7 @@ function ProfileHeader({ address }: { address: string }): JSX.Element {
       <div className="profileHeader__right">
         <div className="profileHeader__right__name">Anonymous Trainer</div>
         <div className="profileHeader__right__description">
-          Hounds Owned: 4
+          Hounds Owned: 3
           <br />
           Breeds completed: 2
           <br />
@@ -34,47 +46,27 @@ function ProfileHeader({ address }: { address: string }): JSX.Element {
   );
 }
 
-const generateRandomData = (genome: string): HoundInfo => {
-  return {
-    nick: "Hound",
-    generation: Math.floor(1 + Math.random() * 3),
-    id: Math.ceil(1241 + Math.random() * 2000),
-    genome: genome,
-    rarity: HoundRarity.COMMON,
-  };
-};
-
-const temporaryHounds = [
-  generateRandomData("1234".repeat(10)),
-  generateRandomData("XXXX".repeat(10)),
-  generateRandomData("qqqx".repeat(10)),
-  generateRandomData("q123".repeat(10)),
-  generateRandomData("a12e".repeat(10)),
-  generateRandomData("se12".repeat(10)),
-  generateRandomData("12ds".repeat(10)),
-  generateRandomData("xw21".repeat(10)),
-  generateRandomData("AAAA".repeat(10)),
-];
-
-function HoundList(): JSX.Element {
+function HoundList(hounds: Hound): JSX.Element {
   return (
-    <div className="houndList">
-      {temporaryHounds.map((hound, idx) => {
+    <div className="houndList"> 
+      {hounds.hounds.map((hound, idx) => {
         return <HoundCard key={idx} hound={hound} width={140} height={140} />;
       })}
     </div>
   );
 }
 
-function UserProfile(): JSX.Element {
+function UserProfile({ Tezos, hounds }: TezosProps): JSX.Element {
   const { address } = useParams() as { address: string };
   console.log(address);
   return (
     <div className="userProfile">
       <ProfileHeader address={address} />
-      <HoundList />
+      <UpdateContract Tezos={Tezos}/>
+      <HoundList hounds={hounds} />
     </div>
   );
 }
 
 export default UserProfile;
+
