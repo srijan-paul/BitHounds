@@ -11,17 +11,7 @@ import UpdateContract from "../UpdateContract";
 // we only render a substring.
 const MaxAddressLen = 12;
 
-type TezosProps = {
-  Tezos: TezosToolkit;
-  hounds: HoundInfo[];
-};
-
-type Hound = {
-  hounds: HoundInfo[];
-};
-
-
-function ProfileHeader({ address }: { address: string }): JSX.Element {
+function ProfileHeader({hounds, address }: {hounds: any, address: string }): JSX.Element {
   return (
     <div className="profileHeader">
       <div className="profileHeader__left">
@@ -35,7 +25,7 @@ function ProfileHeader({ address }: { address: string }): JSX.Element {
       <div className="profileHeader__right">
         <div className="profileHeader__right__name">Anonymous Trainer</div>
         <div className="profileHeader__right__description">
-          Hounds Owned: 3
+          Hounds Owned: {hounds[address].length}
           <br />
           Breeds completed: 2
           <br />
@@ -46,24 +36,27 @@ function ProfileHeader({ address }: { address: string }): JSX.Element {
   );
 }
 
-function HoundList(hounds: Hound): JSX.Element {
+function HoundList({hounds,address}: {hounds: any, address:string}): JSX.Element {
+  console.log(hounds);
+  console.log(hounds[address]);
   return (
     <div className="houndList"> 
-      {hounds.hounds.map((hound, idx) => {
+      {hounds[address] && hounds[address].map((hound: HoundInfo, idx: React.Key | null | undefined) => {
         return <HoundCard key={idx} hound={hound} width={140} height={140} />;
       })}
-    </div>
+    </div>  
   );
 }
 
-function UserProfile({ Tezos, hounds }: TezosProps): JSX.Element {
+function UserProfile({ Tezos, hounds }: {Tezos:TezosToolkit, hounds:any}): JSX.Element {
   const { address } = useParams() as { address: string };
   console.log(address);
+  console.log(hounds);
   return (
     <div className="userProfile">
-      <ProfileHeader address={address} />
+      <ProfileHeader hounds={hounds} address={address} />
       <UpdateContract Tezos={Tezos}/>
-      <HoundList hounds={hounds} />
+      <HoundList hounds={hounds} address={address} />
     </div>
   );
 }

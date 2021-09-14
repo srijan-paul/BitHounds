@@ -15,6 +15,12 @@ type ButtonProps = {
 };
 
 const temporaryHounds: HoundInfo[] = [];
+const map:any = new Map();
+
+function addToList(key:string,value:HoundInfo) {
+  map[key] = map[key] || [];
+  map[key].push(value);
+}
 
 const generateHound = (genome: string, generation:number): HoundInfo => {
   return {
@@ -84,12 +90,11 @@ function ConnectButton({ Tezos, setTezos,setHounds,setPublicToken, setWalletConn
         .then((data) => {
           if(temporaryHounds.length == 0) {
             for (let i=0; i < data.counter; i++) {
-              if(data.hounds[i].owner == walletInfo.userAddress) {
-                temporaryHounds.push(generateHound(data.hounds[i].genome,data.hounds[i].generation));
-              }
+              addToList(data.hounds[i].owner,generateHound(data.hounds[i].genome,data.hounds[i].generation));
             }
-            console.log(temporaryHounds);
-            setHounds(temporaryHounds);
+            console.log(map);
+            console.log(walletInfo.userAddress);
+            setHounds(map);
           }
         })
         .catch((error) => {

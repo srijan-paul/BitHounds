@@ -1,11 +1,12 @@
 import { TezosToolkit } from "@taquito/taquito";
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import Button from "../Button";
 import ConnectButton from "../ConnectWallet";
 import { getRandomHoundRenderer } from "../../scripts/generate-hounds";
 import "../css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
+import { WalletContext } from "../context/WalletContext";
 
 type TezosProps = {
   setTezos: Dispatch<SetStateAction<any>>;
@@ -38,8 +39,10 @@ function ConnectWallet({ setTezos, setHounds }: TezosProps) {
 }
 
 function PlayButton() {
+  const walletInfo = useContext(WalletContext);
+  const userLink = "/usr/"+ walletInfo.userAddress; 
   return (
-    <Link to="/usr/sad7qw79duo">
+    <Link to = {userLink}>
       <Button>
         <i className="fa fa-play"></i>
         &nbsp; &nbsp; Get Started

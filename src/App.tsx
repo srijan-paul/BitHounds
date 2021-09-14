@@ -5,15 +5,14 @@ import { useState } from "react";
 import { TezosToolkit } from "@taquito/taquito";
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { HoundInfo } from "./scripts/hound-genome";
-const temporaryHounds: HoundInfo[] = [];
+const map = new Map();
 function App(): JSX.Element {
   const [Tezos, setTezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
-  const [hounds, setHounds] = useState(temporaryHounds);
+  const [hounds, setHounds] = useState(map);
   return (
     <div className="App">
-      <Navbar />
       <BrowserRouter>
+        <Navbar />
         <Switch>
           <Route exact path="/">
             <Home setTezos={setTezos} setHounds = {setHounds} />
