@@ -14,8 +14,7 @@ type ButtonProps = {
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
 
-const temporaryHounds: HoundInfo[] = [];
-const map:any = new Map();
+let map:any = new Map();
 
 function addToList(key:string,value:HoundInfo) {
   map[key] = map[key] || [];
@@ -88,14 +87,13 @@ function ConnectButton({ Tezos, setTezos,setHounds,setPublicToken, setWalletConn
       })
         .then((response) => response.json())
         .then((data) => {
-          if(temporaryHounds.length == 0) {
-            for (let i=0; i < data.counter; i++) {
-              addToList(data.hounds[i].owner,generateHound(data.hounds[i].genome,data.hounds[i].generation));
-            }
-            console.log(map);
-            console.log(walletInfo.userAddress);
-            setHounds(map);
+          for (let i=0; i < data.counter; i++) {
+            addToList(data.hounds[i].owner,generateHound(data.hounds[i].genome,data.hounds[i].generation));
           }
+          console.log(map);
+          console.log(walletInfo.userAddress);
+          setHounds(map);
+          map = new Map();
         })
         .catch((error) => {
           console.error("Error:", error);

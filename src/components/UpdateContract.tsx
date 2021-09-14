@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable no-empty */
 /* eslint-disable func-style */
@@ -9,11 +10,15 @@ interface UpdateContractProps {
     Tezos: TezosToolkit;
 }
 
+
+
 const UseContract = ({ Tezos }: UpdateContractProps) => {
+  const base62 = require("base62-random");
+  const genome = base62(40);
   const buy = async (): Promise<void> => {
     const contract = await Tezos.wallet.at("KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ");
     try {
-      const op = await contract.methods.createHound(3, "6Ip0PFw4AyzAqpQn8Bxh12XzcbfLCdlUlQzvjk2I", 0).send();
+      const op = await contract.methods.createHound(3, genome, 0).send();
       await op.confirmation();
     } catch (error) {
       console.log(error);
@@ -41,3 +46,4 @@ const UpdateContract = ({ Tezos }: UpdateContractProps): JSX.Element => {
 };
 
 export default UpdateContract;
+
