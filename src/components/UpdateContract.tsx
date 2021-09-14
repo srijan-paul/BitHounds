@@ -14,10 +14,10 @@ interface UpdateContractProps {
 
 const UseContract = ({ Tezos }: UpdateContractProps) => {
   const base62 = require("base62-random");
-  const genome = base62(40);
   const buy = async (): Promise<void> => {
     const contract = await Tezos.wallet.at("KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ");
     try {
+      const genome = base62(40);
       const op = await contract.methods.createHound(3, genome, 0).send();
       await op.confirmation();
     } catch (error) {
