@@ -5,25 +5,31 @@ import { useState } from "react";
 import { TezosToolkit } from "@taquito/taquito";
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+
+
 const map = new Map();
 function App(): JSX.Element {
-  const [Tezos, setTezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
+  const [Tezos, setTezos] = useState<TezosToolkit>(
+    new TezosToolkit("https://api.tez.ie/rpc/granadanet")
+  );
+  
   const [hounds, setHounds] = useState(map);
+
   return (
     <div className="App">
       <BrowserRouter>
         <Navbar />
         <Switch>
           <Route exact path="/">
-            <Home setTezos={setTezos} setHounds = {setHounds} />
+            <Home setTezos={setTezos} setHounds={setHounds} />
           </Route>
 
           <Route path="/home">
-            <Home setTezos={setTezos} setHounds = {setHounds}/>
+            <Home setTezos={setTezos} setHounds={setHounds} />
           </Route>
 
           <Route path="/usr/:address">
-            <UserProfile Tezos = {Tezos} hounds = {hounds} />
+            <UserProfile Tezos={Tezos} hounds={hounds} />
           </Route>
         </Switch>
       </BrowserRouter>

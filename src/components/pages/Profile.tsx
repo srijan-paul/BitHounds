@@ -12,6 +12,7 @@ import UpdateContract from "../UpdateContract";
 const MaxAddressLen = 12;
 
 function ProfileHeader({hounds, address }: {hounds: any, address: string }): JSX.Element {
+  console.log(hounds, address);
   return (
     <div className="profileHeader">
       <div className="profileHeader__left">

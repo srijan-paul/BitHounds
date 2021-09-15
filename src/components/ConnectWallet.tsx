@@ -14,14 +14,14 @@ type ButtonProps = {
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
 
-let map:any = new Map();
+let map: any = new Map();
 
-function addToList(key:string,value:HoundInfo) {
+function addToList(key: string, value: HoundInfo) {
   map[key] = map[key] || [];
   map[key].push(value);
 }
 
-const generateHound = (genome: string, generation:number): HoundInfo => {
+const generateHound = (genome: string, generation: number): HoundInfo => {
   return {
     nick: "Hound",
     generation: generation,
@@ -31,7 +31,13 @@ const generateHound = (genome: string, generation:number): HoundInfo => {
   };
 };
 
-function ConnectButton({ Tezos, setTezos,setHounds,setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
+function ConnectButton({
+  Tezos,
+  setTezos,
+  setHounds,
+  setPublicToken,
+  setWalletConnected,
+}: ButtonProps): JSX.Element {
   const walletInfo = useContext(WalletContext);
 
   async function connectWallet() {
@@ -79,16 +85,22 @@ function ConnectButton({ Tezos, setTezos,setHounds,setPublicToken, setWalletConn
         walletInfo.setAddress(userAddress);
       }
 
-      fetch("https://api.granadanet.tzkt.io/v1/contracts/KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ/storage", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
+      fetch(
+        "https://api.granadanet.tzkt.io/v1/contracts/KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ/storage",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
         .then((response) => response.json())
         .then((data) => {
-          for (let i=0; i < data.counter; i++) {
-            addToList(data.hounds[i].owner,generateHound(data.hounds[i].genome,data.hounds[i].generation));
+          for (let i = 0; i < data.counter; i++) {
+            addToList(
+              data.hounds[i].owner,
+              generateHound(data.hounds[i].genome, data.hounds[i].generation)
+            );
           }
           console.log(map);
           console.log(walletInfo.userAddress);
