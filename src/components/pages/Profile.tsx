@@ -2,7 +2,8 @@ import { TezosToolkit } from "@taquito/taquito";
 import React from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
-import { HoundInfo} from "../../scripts/hound-genome";
+import { HoundInfo } from "../../scripts/hound-genome";
+import { assert } from "../../util/assert";
 import "../css/Profile.css";
 import HoundCard from "../HoundCard";
 import UpdateContract from "../UpdateContract";
@@ -11,7 +12,7 @@ import UpdateContract from "../UpdateContract";
 // we only render a substring.
 const MaxAddressLen = 12;
 
-function ProfileHeader({hounds, address }: {hounds: any, address: string }): JSX.Element {
+function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
   console.log(hounds, address);
   return (
     <div className="profileHeader">
@@ -23,10 +24,11 @@ function ProfileHeader({hounds, address }: {hounds: any, address: string }): JSX
           {address.length >= MaxAddressLen ? address.substring(0, MaxAddressLen) + "..." : address}
         </div>
       </div>
+
       <div className="profileHeader__right">
         <div className="profileHeader__right__name">Anonymous Trainer</div>
         <div className="profileHeader__right__description">
-          Hounds Owned: {hounds[address].length}
+          Hounds Owned: {hounds.length}
           <br />
           Breeds completed: 2
           <br />
@@ -37,30 +39,35 @@ function ProfileHeader({hounds, address }: {hounds: any, address: string }): JSX
   );
 }
 
-function HoundList({hounds,address}: {hounds: any, address:string}): JSX.Element {
-  console.log(hounds);
-  console.log(hounds[address]);
+function HoundList({ hounds }: { hounds: HoundInfo[] }): JSX.Element {
   return (
-    <div className="houndList"> 
-      {hounds[address] && hounds[address].map((hound: HoundInfo, idx: React.Key | null | undefined) => {
-        return <HoundCard key={idx} hound={hound} width={140} height={140} />;
+    <div className="houndList">
+      {hounds.map((hound, key) => {
+        return <HoundCard key={key} hound={hound} width={140} height={140} />;
       })}
-    </div>  
+    </div>
   );
 }
 
-function UserProfile({ Tezos, hounds }: {Tezos:TezosToolkit, hounds:any}): JSX.Element {
+function UserProfile({
+  Tezos,
+  hounds,
+}: {
+  Tezos: TezosToolkit;
+  hounds: Map<string, HoundInfo[]>;
+}): JSX.Element {
   const { address } = useParams() as { address: string };
   console.log(address);
   console.log(hounds);
+  assert(hounds.has(address));
+
   return (
     <div className="userProfile">
-      <ProfileHeader hounds={hounds} address={address} />
-      <UpdateContract Tezos={Tezos}/>
-      <HoundList hounds={hounds} address={address} />
+      <ProfileHeader hounds={hounds.get(address) as HoundInfo[]} address={address} />
+      <UpdateContract Tezos={Tezos} />
+      <HoundList hounds={hounds.get(address) as HoundInfo[]} />
     </div>
   );
 }
 
 export default UserProfile;
-

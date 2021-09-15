@@ -7,13 +7,13 @@ import "../css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
 import { WalletContext } from "../context/WalletContext";
+import { HoundInfo } from "../../scripts/hound-genome";
 
 type TezosProps = {
-  setTezos: Dispatch<SetStateAction<any>>;
   setHounds: Dispatch<SetStateAction<any>>;
 };
 
-function ConnectWallet({ setTezos, setHounds }: TezosProps) {
+function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
   const [, setPublicToken] = useState<string | null>("");
   const [isWalletConnected, setWalletConnected] = useState<boolean>(false);
@@ -30,8 +30,7 @@ function ConnectWallet({ setTezos, setHounds }: TezosProps) {
   return (
     <ConnectButton
       Tezos={Tezos}
-      setTezos={setTezos}
-      setHounds={setHounds}
+      hounds={hounds}
       setPublicToken={setPublicToken}
       setWalletConnected={setWalletConnected}
     />
@@ -40,9 +39,9 @@ function ConnectWallet({ setTezos, setHounds }: TezosProps) {
 
 function PlayButton() {
   const walletInfo = useContext(WalletContext);
-  const userLink = "/usr/"+ walletInfo.userAddress; 
+  const userLink = "/usr/" + walletInfo.userAddress;
   return (
-    <Link to = {userLink}>
+    <Link to={userLink}>
       <Button>
         <i className="fa fa-play"></i>
         &nbsp; &nbsp; Get Started
@@ -51,7 +50,7 @@ function PlayButton() {
   );
 }
 
-function Hero({ setTezos, setHounds }: TezosProps) {
+function Hero({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   return (
     <div className="hero">
       <div className="hero__text">
@@ -66,7 +65,7 @@ function Hero({ setTezos, setHounds }: TezosProps) {
       </div>
 
       <div className="hero__buttons">
-        <ConnectWallet setTezos={setTezos} setHounds={setHounds} />
+        <ConnectWallet hounds={hounds} />
         <PlayButton />
       </div>
     </div>
@@ -141,10 +140,10 @@ function AboutGame() {
   );
 }
 
-function Home({ setTezos, setHounds }: TezosProps): JSX.Element {
+function Home({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
   return (
     <div>
-      <Hero setTezos={setTezos} setHounds = {setHounds}/>
+      <Hero hounds={hounds} />
 
       <SVGSlantTop />
       <AboutGame />

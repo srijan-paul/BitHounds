@@ -8,17 +8,15 @@ import { HoundInfo, HoundRarity } from "../scripts/hound-genome";
 
 type ButtonProps = {
   Tezos: TezosToolkit;
-  setTezos: Dispatch<SetStateAction<any>>;
-  setHounds: Dispatch<SetStateAction<any>>;
+  hounds: Map<string, HoundInfo[]>;
   setPublicToken: Dispatch<SetStateAction<string | null>>;
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
 
-let map: any = new Map();
 
-function addToList(key: string, value: HoundInfo) {
-  map[key] = map[key] || [];
-  map[key].push(value);
+function addHoundToMap(map: Map<string, HoundInfo[]>, key: string, value: HoundInfo) {
+  if (!map.has(key)) map.set(key, []);
+  (map.get(key) as HoundInfo[]).push(value);
 }
 
 const generateHound = (genome: string, generation: number): HoundInfo => {
@@ -33,8 +31,7 @@ const generateHound = (genome: string, generation: number): HoundInfo => {
 
 function ConnectButton({
   Tezos,
-  setTezos,
-  setHounds,
+  hounds,
   setPublicToken,
   setWalletConnected,
 }: ButtonProps): JSX.Element {
@@ -77,7 +74,6 @@ function ConnectButton({
 
       // TODO (@srijan): why do I have to cast the wallet twice here?
       Tezos.setWalletProvider(wallet as unknown as WalletProvider);
-      setTezos(Tezos);
       walletInfo.setWallet(wallet);
       const activeAccount = await wallet.client.getActiveAccount();
       if (activeAccount) {
@@ -97,15 +93,12 @@ function ConnectButton({
         .then((response) => response.json())
         .then((data) => {
           for (let i = 0; i < data.counter; i++) {
-            addToList(
+            addHoundToMap(
+              hounds,
               data.hounds[i].owner,
               generateHound(data.hounds[i].genome, data.hounds[i].generation)
             );
           }
-          console.log(map);
-          console.log(walletInfo.userAddress);
-          setHounds(map);
-          map = new Map();
         })
         .catch((error) => {
           console.error("Error:", error);
