@@ -1,4 +1,3 @@
-import { TezosToolkit } from "@taquito/taquito";
 import React from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
@@ -12,7 +11,7 @@ import UpdateContract from "../UpdateContract";
 const MaxAddressLen = 12;
 
 function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
-  console.log(hounds, address);
+
   return (
     <div className="profileHeader">
       <div className="profileHeader__left">
@@ -50,8 +49,6 @@ function HoundList({ hounds }: { hounds: HoundInfo[] }): JSX.Element {
 
 function UserProfile({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
   const { address } = useParams() as { address: string };
-  console.log(address);
-  console.log(hounds);
   return (
     <div className="userProfile">
       <ProfileHeader hounds={hounds.get(address) as HoundInfo[]} address={address} />

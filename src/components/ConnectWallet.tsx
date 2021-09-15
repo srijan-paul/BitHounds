@@ -71,6 +71,7 @@ function ConnectButton({ hounds, setPublicToken, setWalletConnected }: ButtonPro
       // TODO (@srijan): why do I have to cast the wallet twice here?
       tzContext.toolkit.setWalletProvider(wallet as unknown as WalletProvider);
       tzContext.setToolkit(tzContext.toolkit);
+
       console.log(tzContext.toolkit.signer, "<- is the signer");
 
       walletInfo.setWallet(wallet);
