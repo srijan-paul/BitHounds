@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 import { WalletContext } from "../context/WalletContext";
 import { HoundInfo } from "../../scripts/hound-genome";
 
-
 function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
   const [, setPublicToken] = useState<string | null>("");

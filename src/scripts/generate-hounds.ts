@@ -1,4 +1,4 @@
-import { assert } from "../util/assert";
+import { assert, randChoice } from "./util";
 import { decodeBase62Quadlet, decodeGenome } from "./hound-genome";
 
 async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
@@ -10,17 +10,6 @@ async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
 }
 
 const MaxTextureCount = 5;
-
-// Returns a random integer
-function randInt(lo: number, hi: number) {
-  return Math.floor(lo + Math.random() * hi);
-}
-
-// Returns a random element from the array `arr`.
-function randChoice<T>(arr: T[]) {
-  return arr[randInt(0, arr.length)];
-}
-
 const partNames = ["base", "eyes", "mouth", "horn"];
 
 // loads all images whose paths are in the array `paths`.

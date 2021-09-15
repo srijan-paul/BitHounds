@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Book, Code, Dog, User } from "./svgs";
 import "./css/Navbar.css";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function NavItem(props: { name: string; children: PropTypes.ReactNodeLike }) {
   return (
@@ -12,7 +12,6 @@ function NavItem(props: { name: string; children: PropTypes.ReactNodeLike }) {
     </div>
   );
 }
-
 
 function Navbar(): JSX.Element {
   const [searchItem, setSearchItem] = useState("");
@@ -36,7 +35,7 @@ function Navbar(): JSX.Element {
       </NavItem>
 
       <NavItem name="Profile">
-        <User size="35px"/>
+        <User size="35px" />
       </NavItem>
 
       <div className="searchbar">
@@ -49,8 +48,10 @@ function Navbar(): JSX.Element {
             value={searchItem}
             onChange={handleChange}
           />
-          <Link to ={`/usr/${searchItem}`}>
-            <button type="submit"><i className="fa fa-search"></i></button>
+          <Link to={`/usr/${searchItem}`}>
+            <button type="submit">
+              <i className="fa fa-search"></i>
+            </button>
           </Link>
         </form>
       </div>

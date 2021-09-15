@@ -11,7 +11,6 @@ import UpdateContract from "../UpdateContract";
 const MaxAddressLen = 12;
 
 function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
-
   return (
     <div className="profileHeader">
       <div className="profileHeader__left">
