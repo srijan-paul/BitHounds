@@ -49,7 +49,7 @@ function ConnectButton({
       const userAddress = await wallet.getPKH();
       walletInfo.setAddress(userAddress);
       setWalletConnected(true);
-      console.log(walletInfo.userAddress);
+      console.log(walletInfo.userAddress, "<- Is the user address");
     } catch (error) {
       console.error(error);
       setWalletConnected(false);

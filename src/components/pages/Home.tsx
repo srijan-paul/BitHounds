@@ -39,9 +39,8 @@ function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
 
 function PlayButton() {
   const walletInfo = useContext(WalletContext);
-  const userLink = "/usr/" + walletInfo.userAddress;
   return (
-    <Link to={userLink}>
+    <Link to={() => "/usr/" + walletInfo.userAddress}>
       <Button>
         <i className="fa fa-play"></i>
         &nbsp; &nbsp; Get Started

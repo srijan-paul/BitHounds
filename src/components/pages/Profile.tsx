@@ -28,9 +28,9 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
       <div className="profileHeader__right">
         <div className="profileHeader__right__name">Anonymous Trainer</div>
         <div className="profileHeader__right__description">
-          Hounds Owned: {hounds.length}
+          Hounds Owned: {hounds ? hounds.length : 0}
           <br />
-          Breeds completed: 2
+          Breeds completed: 0 
           <br />
           Level: Initiate
         </div>
@@ -59,13 +59,15 @@ function UserProfile({
   const { address } = useParams() as { address: string };
   console.log(address);
   console.log(hounds);
-  assert(hounds.has(address));
-
   return (
     <div className="userProfile">
       <ProfileHeader hounds={hounds.get(address) as HoundInfo[]} address={address} />
       <UpdateContract Tezos={Tezos} />
-      <HoundList hounds={hounds.get(address) as HoundInfo[]} />
+      {hounds.has(address) ? (
+        <HoundList hounds={hounds.get(address) as HoundInfo[]} />
+      ) : (
+        <div className="noHounds">User does not own any hounds.</div>
+      )}
     </div>
   );
 }
