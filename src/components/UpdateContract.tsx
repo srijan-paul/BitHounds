@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable react/react-in-jsx-scope */
 /* eslint-disable no-empty */
 /* eslint-disable func-style */
 import { TezosToolkit } from "@taquito/taquito";
 import Button from "./Button";
 import "./css/Profile.css";
+import React, { useContext } from "react";
+import { TzContext } from "./context/TzToolKitContext";
 
 interface UpdateContractProps {
-    Tezos: TezosToolkit;
+  Tezos: TezosToolkit;
 }
-
-
 
 const UseContract = ({ Tezos }: UpdateContractProps) => {
   const base62 = require("base62-random");
@@ -28,22 +27,15 @@ const UseContract = ({ Tezos }: UpdateContractProps) => {
   return (
     <div className="buyButton">
       <Button onClick={buy}>
-        <span>
-            Buy
-        </span>
+        <span>Buy</span>
       </Button>
     </div>
   );
 };
 
-
-const UpdateContract = ({ Tezos }: UpdateContractProps): JSX.Element => {
-  return (
-    <div>
-      <UseContract Tezos={Tezos}/>
-    </div>
-  );
+const UpdateContract = (): JSX.Element => {
+  const tezos = useContext(TzContext);
+  return <UseContract Tezos={tezos.toolkit} />;
 };
 
 export default UpdateContract;
-

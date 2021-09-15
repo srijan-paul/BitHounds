@@ -3,7 +3,6 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
 import { HoundInfo } from "../../scripts/hound-genome";
-import { assert } from "../../util/assert";
 import "../css/Profile.css";
 import HoundCard from "../HoundCard";
 import UpdateContract from "../UpdateContract";
@@ -30,7 +29,7 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
         <div className="profileHeader__right__description">
           Hounds Owned: {hounds ? hounds.length : 0}
           <br />
-          Breeds completed: 0 
+          Breeds completed: 0
           <br />
           Level: Initiate
         </div>
@@ -49,20 +48,14 @@ function HoundList({ hounds }: { hounds: HoundInfo[] }): JSX.Element {
   );
 }
 
-function UserProfile({
-  Tezos,
-  hounds,
-}: {
-  Tezos: TezosToolkit;
-  hounds: Map<string, HoundInfo[]>;
-}): JSX.Element {
+function UserProfile({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
   const { address } = useParams() as { address: string };
   console.log(address);
   console.log(hounds);
   return (
     <div className="userProfile">
       <ProfileHeader hounds={hounds.get(address) as HoundInfo[]} address={address} />
-      <UpdateContract Tezos={Tezos} />
+      <UpdateContract />
       {hounds.has(address) ? (
         <HoundList hounds={hounds.get(address) as HoundInfo[]} />
       ) : (

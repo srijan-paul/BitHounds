@@ -5,6 +5,7 @@ import { NetworkType, BeaconEvent, defaultEventCallbacks } from "@airgap/beacon-
 import Button from "./Button";
 import { WalletContext } from "./context/WalletContext";
 import { HoundInfo, HoundRarity } from "../scripts/hound-genome";
+import { TzContext } from "./context/TzToolKitContext";
 
 type ButtonProps = {
   Tezos: TezosToolkit;
@@ -12,7 +13,6 @@ type ButtonProps = {
   setPublicToken: Dispatch<SetStateAction<string | null>>;
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
-
 
 function addHoundToMap(map: Map<string, HoundInfo[]>, key: string, value: HoundInfo) {
   if (!map.has(key)) map.set(key, []);
@@ -29,13 +29,9 @@ const generateHound = (genome: string, generation: number): HoundInfo => {
   };
 };
 
-function ConnectButton({
-  Tezos,
-  hounds,
-  setPublicToken,
-  setWalletConnected,
-}: ButtonProps): JSX.Element {
+function ConnectButton({ hounds, setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
   const walletInfo = useContext(WalletContext);
+  const tzContext = useContext(TzContext);
 
   async function connectWallet() {
     const wallet = walletInfo.wallet as BeaconWallet;
@@ -73,7 +69,10 @@ function ConnectButton({
       });
 
       // TODO (@srijan): why do I have to cast the wallet twice here?
-      Tezos.setWalletProvider(wallet as unknown as WalletProvider);
+      tzContext.toolkit.setWalletProvider(wallet as unknown as WalletProvider);
+      tzContext.setToolkit(tzContext.toolkit);
+      console.log(tzContext.toolkit.signer, "<- is the signer");
+
       walletInfo.setWallet(wallet);
       const activeAccount = await wallet.client.getActiveAccount();
       if (activeAccount) {
@@ -81,28 +80,19 @@ function ConnectButton({
         walletInfo.setAddress(userAddress);
       }
 
-      fetch(
-        "https://api.granadanet.tzkt.io/v1/contracts/KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ/storage",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((data) => {
-          for (let i = 0; i < data.counter; i++) {
-            addHoundToMap(
-              hounds,
-              data.hounds[i].owner,
-              generateHound(data.hounds[i].genome, data.hounds[i].generation)
-            );
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
+      const url =
+        "https://api.granadanet.tzkt.io/v1/contracts/KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ/storage";
+      const response = await fetch(url, { method: "GET" });
+
+      const storage = await response.json();
+
+      for (let i = 0; i < storage.counter; i++) {
+        addHoundToMap(
+          hounds,
+          storage.hounds[i].owner,
+          generateHound(storage.hounds[i].genome, storage.hounds[i].generation)
+        );
+      }
     })();
   }, []);
 
