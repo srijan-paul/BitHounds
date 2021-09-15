@@ -1,13 +1,15 @@
 import { TezosToolkit } from "@taquito/taquito";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Button from "../Button";
 import ConnectButton from "../ConnectWallet";
 import { getRandomHoundRenderer } from "../../scripts/generate-hounds";
 import "../css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
+import { WalletContext } from "../context/WalletContext";
+import { HoundInfo } from "../../scripts/hound-genome";
 
-function ConnectWallet() {
+function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
   const [, setPublicToken] = useState<string | null>("");
   const [isWalletConnected, setWalletConnected] = useState<boolean>(false);
@@ -24,6 +26,7 @@ function ConnectWallet() {
   return (
     <ConnectButton
       Tezos={Tezos}
+      hounds={hounds}
       setPublicToken={setPublicToken}
       setWalletConnected={setWalletConnected}
     />
@@ -31,8 +34,9 @@ function ConnectWallet() {
 }
 
 function PlayButton() {
+  const walletInfo = useContext(WalletContext);
   return (
-    <Link to="/usr/sad7qw79duo">
+    <Link to={() => "/usr/" + walletInfo.userAddress}>
       <Button>
         <i className="fa fa-play"></i>
         &nbsp; &nbsp; Get Started
@@ -41,7 +45,7 @@ function PlayButton() {
   );
 }
 
-function Hero() {
+function Hero({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   return (
     <div className="hero">
       <div className="hero__text">
@@ -56,7 +60,7 @@ function Hero() {
       </div>
 
       <div className="hero__buttons">
-        <ConnectWallet />
+        <ConnectWallet hounds={hounds} />
         <PlayButton />
       </div>
     </div>
@@ -131,10 +135,10 @@ function AboutGame() {
   );
 }
 
-function Home(): JSX.Element {
+function Home({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
   return (
     <div>
-      <Hero />
+      <Hero hounds={hounds} />
 
       <SVGSlantTop />
       <AboutGame />

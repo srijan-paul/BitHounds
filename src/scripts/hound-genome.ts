@@ -1,4 +1,4 @@
-import { assert } from "../util/assert";
+import { assert } from "./util";
 
 // maps a Hound's feature to it's corresponding number in the Genome.
 // eg: mouth -> 1202

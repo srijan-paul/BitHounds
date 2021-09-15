@@ -1,3 +1,7 @@
+.buyButton {
+  margin-bottom: 10rem;
+}
+
 .userProfile {
   width: 50%;
   margin: auto;
@@ -8,6 +12,8 @@
 }
 
 .profileHeader {
+  float: left;
+  width: 85%;
   text-align: left;
   display: flex;
   gap: 1.4rem;

@@ -1,3 +1,10 @@
+.searchTerm {
+  border-radius: 8px;
+  border-color: black;
+  margin-top: 10px;
+  border: 3px solid #1a73ea;
+}
+
 .nav__item {
   display: flex;
   gap: 10%;
