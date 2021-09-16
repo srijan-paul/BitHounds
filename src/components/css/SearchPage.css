@@ -1,0 +1,32 @@
+.searchPage {
+  width: 80%;
+  margin: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+  margin-top: 5rem;
+}
+
+.searchTerm {
+  border-radius: 25px;
+  font-family: "Rubik";
+  border-color: black;
+  background-color: var(--clr-gray);
+  border: 2px solid var(--clr-gray);
+  padding: 0rem 1rem;
+  outline: none;
+  transition-duration: 400ms;
+}
+
+.searchTerm:hover, .searchTerm:focus {
+  border-color: var(--sig-color);
+  background-color: white;
+}
+
+.searchBar {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
