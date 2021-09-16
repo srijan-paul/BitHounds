@@ -27,7 +27,7 @@ function App(): JSX.Element {
           </Route>
 
           <Route path="/search">
-            <Search/>
+            <Search />
           </Route>
         </Switch>
       </BrowserRouter>

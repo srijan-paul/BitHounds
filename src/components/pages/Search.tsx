@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "../css/SearchPage.css";
 import Button from "../Button";
-import { WalletContext } from "../context/WalletContext";
 
 function SearchBar(): JSX.Element {
   const [searchItem, setSearchItem] = React.useState("");
@@ -30,8 +29,6 @@ function SearchBar(): JSX.Element {
 }
 
 function Search(): JSX.Element {
-  const walletInfo = React.useContext(WalletContext);
-
   return (
     <div className="searchPage">
       <h1 style={{ color: "var(--clr-faded)" }}>Find trainers across the world!</h1>

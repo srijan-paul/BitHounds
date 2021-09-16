@@ -12,7 +12,6 @@
 .searchTerm {
   border-radius: 25px;
   font-family: "Rubik";
-  border-color: black;
   background-color: var(--clr-gray);
   border: 2px solid var(--clr-gray);
   padding: 0rem 1rem;
@@ -20,7 +19,8 @@
   transition-duration: 400ms;
 }
 
-.searchTerm:hover, .searchTerm:focus {
+.searchTerm:hover,
+.searchTerm:focus {
   border-color: var(--sig-color);
   background-color: white;
 }

@@ -87,6 +87,7 @@ function ConnectButton({ hounds, setPublicToken, setWalletConnected }: ButtonPro
 
       const storage = await response.json();
 
+      hounds.clear();
       for (let i = 0; i < storage.counter; i++) {
         addHoundToMap(
           hounds,
