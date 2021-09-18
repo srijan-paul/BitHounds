@@ -1,0 +1,26 @@
+.Actions {
+  display: grid;
+  grid-template-columns: 1.5fr 1.8fr;
+  grid-gap: 1px;
+  grid-column-gap: 1px;
+  margin: 5%;
+}
+
+img {
+  padding-left: 30px;
+  max-width: 40%;
+  height: auto;
+}
+
+.Actions__left {
+  justify-items: end;
+  margin-left: 30px;
+}
+
+.Actions__right {
+  justify-items: start;
+}
+
+li {
+  margin-bottom: 1.5rem;
+}

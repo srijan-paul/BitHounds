@@ -8,6 +8,7 @@ import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
 import { WalletContext } from "../context/WalletContext";
 import { HoundInfo } from "../../scripts/hound-genome";
+import Actions from "../Actions";
 
 function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
@@ -143,6 +144,7 @@ function Home({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
       <SVGSlantTop />
       <AboutGame />
       <SVGSlantBottom />
+      <Actions />
     </div>
   );
 }
