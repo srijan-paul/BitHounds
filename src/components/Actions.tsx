@@ -6,7 +6,7 @@ function Actions(): JSX.Element {
   return (
     <div className="Actions">
       <div className="Actions__left">
-        <img src={Tezos_logo}></img>
+        <img src={Tezos_logo} className="img"></img>
       </div>
       <div className="Actions__right">
         <ul style={{listStyleType: "disc", listStylePosition: "inside"}}>
