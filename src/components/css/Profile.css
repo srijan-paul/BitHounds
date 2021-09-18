@@ -12,9 +12,6 @@
 }
 
 .profileHeader {
-  float: left;
-  width: 85%;
-  text-align: left;
   display: flex;
   gap: 1.4rem;
   margin-bottom: 2.2rem;

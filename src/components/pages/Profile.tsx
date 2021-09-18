@@ -2,15 +2,19 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
 import { HoundInfo } from "../../scripts/hound-genome";
+import { WalletContext } from "../context/WalletContext";
 import "../css/Profile.css";
 import HoundCard from "../HoundCard";
-import UpdateContract from "../UpdateContract";
+import UseContract from "../UpdateContract";
 
 // Wallet addresses can be too long for us to render them fully, so
 // we only render a substring.
 const MaxAddressLen = 12;
 
 function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
+  const walletInfo = React.useContext(WalletContext);
+  const { userAddress } = walletInfo;
+
   return (
     <div className="profileHeader">
       <div className="profileHeader__left">
@@ -31,6 +35,8 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
           <br />
           Level: Initiate
         </div>
+        <br />
+        {userAddress == address ? <UseContract /> : null}
       </div>
     </div>
   );
@@ -51,7 +57,6 @@ function UserProfile({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Elem
   return (
     <div className="userProfile">
       <ProfileHeader hounds={hounds.get(address) as HoundInfo[]} address={address} />
-      <UpdateContract />
       {hounds.has(address) ? (
         <HoundList hounds={hounds.get(address) as HoundInfo[]} />
       ) : (

@@ -11,6 +11,7 @@
   --sig-color-2: #1d2d44;
   --clr-bg-2: #edf2f8;
   --clr-faded: #545a8b;
+  --clr-gray: #eff3f4;
   --clr-primary-300: rgba(41, 40, 40, 0.8);
   --font-primary: "Farro";
   --font-secondary: "Rubik";
@@ -37,6 +38,14 @@ h1 {
 p {
   font-size: 1.1rem;
   font-family: var(--font-secondary);
+}
+
+.hover-blue {
+  transition-duration: 300ms;
+}
+
+.hover-blue:hover {
+  color: (--sig-color);
 }
 
 @media only screen and (max-width: 650px) {

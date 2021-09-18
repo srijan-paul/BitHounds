@@ -5,6 +5,7 @@ import { useState } from "react";
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { HoundInfo } from "./scripts/hound-genome";
+import Search from "./components/pages/Search";
 
 function App(): JSX.Element {
   const [hounds] = useState<Map<string, HoundInfo[]>>(new Map());
@@ -23,6 +24,10 @@ function App(): JSX.Element {
 
           <Route path="/usr/:address">
             <UserProfile hounds={hounds} />
+          </Route>
+
+          <Route path="/search">
+            <Search />
           </Route>
         </Switch>
       </BrowserRouter>
