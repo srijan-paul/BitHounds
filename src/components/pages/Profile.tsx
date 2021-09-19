@@ -1,7 +1,7 @@
-import React from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
-import { HoundInfo } from "../../scripts/hound-genome";
+import { HoundInfo, HoundRarity } from "../../scripts/hound-genome";
 import { WalletContext } from "../context/WalletContext";
 import "../css/Profile.css";
 import HoundCard from "../HoundCard";
@@ -10,6 +10,16 @@ import UseContract from "../UpdateContract";
 // Wallet addresses can be too long for us to render them fully, so
 // we only render a substring.
 const MaxAddressLen = 12;
+
+const generateHound = (genome: string, generation: number): HoundInfo => {
+  return {
+    nick: "Hound",
+    generation: generation,
+    id: Math.ceil(1241 + Math.random() * 2000),
+    genome: genome,
+    rarity: HoundRarity.COMMON,
+  };
+};
 
 function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
   const walletInfo = React.useContext(WalletContext);
@@ -42,26 +52,37 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
   );
 }
 
-function HoundList({ hounds }: { hounds: HoundInfo[] }): JSX.Element {
+function HoundList({ address, hounds, setHounds }: { address: string, hounds:HoundInfo[], setHounds:Dispatch<SetStateAction<HoundInfo[]>> }): JSX.Element {
+  const fetchHounds = async(address:string)=>{
+    const url =
+      "https://api.granadanet.tzkt.io/v1/operations/transactions?sender="+address+"&target=KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ&entrypoint=createHound";
+    const response = await fetch(url, { method: "GET" });
+    const storage = await response.json();
+    const temporary: HoundInfo[] = [];
+    for (let i = 0; i < storage.length; i++) {
+      temporary.push(generateHound(storage[i].parameter.value.genome, storage[i].parameter.value.generation));
+    }
+    setHounds(temporary);
+  };
+  useEffect(() => {
+    fetchHounds(address);
+  }, []);
   return (
     <div className="houndList">
-      {hounds.map((hound, key) => {
+      {hounds && (hounds as HoundInfo[]).map((hound, key) => {
         return <HoundCard key={key} hound={hound} width={140} height={140} />;
       })}
     </div>
   );
 }
 
-function UserProfile({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
+function UserProfile(): JSX.Element {
   const { address } = useParams() as { address: string };
+  const [hounds,setHounds] = useState<HoundInfo[]>();
   return (
     <div className="userProfile">
-      <ProfileHeader hounds={hounds.get(address) as HoundInfo[]} address={address} />
-      {hounds.has(address) ? (
-        <HoundList hounds={hounds.get(address) as HoundInfo[]} />
-      ) : (
-        <div className="noHounds">User does not own any hounds.</div>
-      )}
+      <ProfileHeader hounds={(hounds as HoundInfo[])} address={address} />
+      <HoundList address = {address} hounds={hounds as HoundInfo[]} setHounds={setHounds as Dispatch<SetStateAction<HoundInfo[]>>}/>
     </div>
   );
 }
