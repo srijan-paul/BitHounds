@@ -7,6 +7,7 @@ import "../css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
 import { WalletContext } from "../context/WalletContext";
+import Actions from "../Actions";
 
 function ConnectWallet() {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
@@ -141,6 +142,7 @@ function Home(): JSX.Element {
       <SVGSlantTop />
       <AboutGame />
       <SVGSlantBottom />
+      <Actions />
     </div>
   );
 }
