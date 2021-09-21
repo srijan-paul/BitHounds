@@ -52,37 +52,47 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
   );
 }
 
-function HoundList({ address, hounds, setHounds }: { address: string, hounds:HoundInfo[], setHounds:Dispatch<SetStateAction<HoundInfo[]>> }): JSX.Element {
-  const fetchHounds = async(address:string)=>{
-    const url =
-      "https://api.granadanet.tzkt.io/v1/operations/transactions?sender="+address+"&target=KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ&entrypoint=createHound";
+function HoundList({
+  address,
+  hounds,
+  setHounds,
+}: {
+  address: string;
+  hounds: HoundInfo[];
+  setHounds: Dispatch<SetStateAction<HoundInfo[]>>;
+}): JSX.Element {
+  const fetchHounds = async (address: string) => {
+    const url = `https://api.granadanet.tzkt.io/v1/operations/transactions?sender=${address}&target=KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ&entrypoint=createHound`;
     const response = await fetch(url, { method: "GET" });
     const storage = await response.json();
-    const temporary: HoundInfo[] = [];
-    for (let i = 0; i < storage.length; i++) {
-      temporary.push(generateHound(storage[i].parameter.value.genome, storage[i].parameter.value.generation));
-    }
+    const temporary = storage.map(
+      (hound: { parameter: { value: { genome: string; generation: number } } }) =>
+        generateHound(hound.parameter.value.genome, hound.parameter.value.generation)
+    );
     setHounds(temporary);
   };
+
   useEffect(() => {
     fetchHounds(address);
   }, []);
+
   return (
     <div className="houndList">
-      {hounds && (hounds as HoundInfo[]).map((hound, key) => {
-        return <HoundCard key={key} hound={hound} width={140} height={140} />;
-      })}
+      {hounds &&
+        hounds.map((hound, key) => {
+          return <HoundCard key={key} hound={hound} width={140} height={140} />;
+        })}
     </div>
   );
 }
 
 function UserProfile(): JSX.Element {
   const { address } = useParams() as { address: string };
-  const [hounds,setHounds] = useState<HoundInfo[]>();
+  const [hounds, setHounds] = useState<HoundInfo[]>([]);
   return (
     <div className="userProfile">
-      <ProfileHeader hounds={(hounds as HoundInfo[])} address={address} />
-      <HoundList address = {address} hounds={hounds as HoundInfo[]} setHounds={setHounds as Dispatch<SetStateAction<HoundInfo[]>>}/>
+      <ProfileHeader hounds={hounds} address={address} />
+      <HoundList address={address} hounds={hounds} setHounds={setHounds} />
     </div>
   );
 }
