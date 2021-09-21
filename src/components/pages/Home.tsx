@@ -7,10 +7,9 @@ import "../css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
 import { WalletContext } from "../context/WalletContext";
-import { HoundInfo } from "../../scripts/hound-genome";
 import Actions from "../Actions";
 
-function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
+function ConnectWallet() {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
   const [, setPublicToken] = useState<string | null>("");
   const [isWalletConnected, setWalletConnected] = useState<boolean>(false);
@@ -27,7 +26,6 @@ function ConnectWallet({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
   return (
     <ConnectButton
       Tezos={Tezos}
-      hounds={hounds}
       setPublicToken={setPublicToken}
       setWalletConnected={setWalletConnected}
     />
@@ -46,7 +44,7 @@ function PlayButton() {
   );
 }
 
-function Hero({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
+function Hero() {
   return (
     <div className="hero">
       <div className="hero__text">
@@ -61,7 +59,7 @@ function Hero({ hounds }: { hounds: Map<string, HoundInfo[]> }) {
       </div>
 
       <div className="hero__buttons">
-        <ConnectWallet hounds={hounds} />
+        <ConnectWallet/>
         <PlayButton />
       </div>
     </div>
@@ -136,10 +134,10 @@ function AboutGame() {
   );
 }
 
-function Home({ hounds }: { hounds: Map<string, HoundInfo[]> }): JSX.Element {
+function Home(): JSX.Element {
   return (
     <div>
-      <Hero hounds={hounds} />
+      <Hero />
 
       <SVGSlantTop />
       <AboutGame />
