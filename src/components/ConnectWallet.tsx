@@ -5,6 +5,7 @@ import { NetworkType, BeaconEvent, defaultEventCallbacks } from "@airgap/beacon-
 import Button from "./Button";
 import { WalletContext } from "./context/WalletContext";
 import { TzContext } from "./context/TzToolKitContext";
+import { shortString } from "../scripts/util";
 
 type ButtonProps = {
   Tezos: TezosToolkit;
@@ -12,13 +13,21 @@ type ButtonProps = {
   setWalletConnected: Dispatch<SetStateAction<boolean>>;
 };
 
-function ConnectButton({setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
+function ConnectButton({ setPublicToken, setWalletConnected }: ButtonProps): JSX.Element {
   const walletInfo = useContext(WalletContext);
   const tzContext = useContext(TzContext);
+  const [isConnected, setConnected] = React.useState<boolean>(Boolean(walletInfo.wallet));
 
   async function connectWallet() {
     const wallet = walletInfo.wallet as BeaconWallet;
+
     try {
+      const activeAccount = await wallet.client.getActiveAccount();
+      if (activeAccount) {
+        setConnected(true);
+        return;
+      }
+
       await wallet.requestPermissions({
         network: {
           type: NetworkType.GRANADANET,
@@ -37,6 +46,8 @@ function ConnectButton({setPublicToken, setWalletConnected }: ButtonProps): JSX.
 
   useEffect(() => {
     (async () => {
+      if (walletInfo.userAddress && walletInfo.wallet) return;
+
       const wallet = new BeaconWallet({
         name: "Taquito Boilerplate",
         preferredNetwork: NetworkType.GRANADANET,
@@ -66,9 +77,17 @@ function ConnectButton({setPublicToken, setWalletConnected }: ButtonProps): JSX.
     })();
   }, []);
 
+  if (!isConnected) {
+    return (
+      <Button onClick={connectWallet}>
+        <i className="fas fa-wallet"></i>&nbsp; &nbsp; Connect Wallet
+      </Button>
+    );
+  }
+
   return (
-    <Button onClick={connectWallet}>
-      <i className="fas fa-wallet"></i>&nbsp; &nbsp; Connect Wallet
+    <Button>
+      <i className="fas fa-eye"></i>&nbsp; &nbsp; {shortString(walletInfo.userAddress, 12)}
     </Button>
   );
 }

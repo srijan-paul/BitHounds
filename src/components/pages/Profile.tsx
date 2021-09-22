@@ -78,10 +78,9 @@ function HoundList({
 
   return (
     <div className="houndList">
-      {hounds &&
-        hounds.map((hound, key) => {
-          return <HoundCard key={key} hound={hound} width={140} height={140} />;
-        })}
+      {hounds
+        ? hounds.map((hound, key) => <HoundCard key={key} hound={hound} width={140} height={140} />)
+        : "Loading..."}
     </div>
   );
 }

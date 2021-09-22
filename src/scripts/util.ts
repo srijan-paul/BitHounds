@@ -30,3 +30,8 @@ export function randomBase62(len: number): string {
 
   return res;
 }
+
+export function shortString(str: string, limit = 20): string {
+  if (str.length < limit) return str;
+  return str.substring(0, limit - 3) + "...";
+}
