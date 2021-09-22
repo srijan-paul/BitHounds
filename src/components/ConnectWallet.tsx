@@ -18,21 +18,29 @@ function ConnectButton({setPublicToken, setWalletConnected }: ButtonProps): JSX.
 
   async function connectWallet() {
     const wallet = walletInfo.wallet as BeaconWallet;
-    try {
-      await wallet.requestPermissions({
-        network: {
-          type: NetworkType.GRANADANET,
-          rpcUrl: "https://api.tez.ie/rpc/granadanet",
-        },
-      });
-      const userAddress = await wallet.getPKH();
-      walletInfo.setAddress(userAddress);
+    const activeAccount = await wallet.client.getActiveAccount();
+    if (activeAccount) {
+      console.log("Already connected:", activeAccount.address);
       setWalletConnected(true);
-      console.log(walletInfo.userAddress, "<- Is the user address");
-    } catch (error) {
-      console.error(error);
-      setWalletConnected(false);
     }
+    else{
+      try {
+        await wallet.requestPermissions({
+          network: {
+            type: NetworkType.GRANADANET,
+            rpcUrl: "https://api.tez.ie/rpc/granadanet",
+          },
+        });
+        const userAddress = await wallet.getPKH();
+        walletInfo.setAddress(userAddress);
+        setWalletConnected(true);
+        console.log(walletInfo.userAddress, "<- Is the user address");
+      } catch (error) {
+        console.error(error);
+        setWalletConnected(false);
+      }
+    }
+    await wallet.clearActiveAccount();
   }
 
   useEffect(() => {

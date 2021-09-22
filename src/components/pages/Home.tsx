@@ -45,6 +45,10 @@ function PlayButton() {
 }
 
 function Hero() {
+  const walletInfo = React.useContext(WalletContext);
+  const { userAddress } = walletInfo;
+  const first = userAddress.slice(0,5);
+  const second = userAddress.slice(-5);
   return (
     <div className="hero">
       <div className="hero__text">
@@ -56,6 +60,8 @@ function Hero() {
         </div>
 
         <p className="hero__text__desc">Digital collectible trading cards with beasts inside.</p>
+        <span className="hero__text__desc">connected to </span> <b><u>{first} .... {second}</u></b>
+        <span className="hero__text__desc"> click on connectwallet to connect to other address.</span>
       </div>
 
       <div className="hero__buttons">
