@@ -1,10 +1,11 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
 import { HoundInfo, HoundRarity } from "../../scripts/hound-genome";
+import Button from "../Button";
 import { WalletContext } from "../context/WalletContext";
 import "../css/Profile.css";
-import HoundCard from "../HoundCard";
+import HoundCard, { EmptyCanvas } from "../HoundCard";
 import UseContract from "../UpdateContract";
 
 // Wallet addresses can be too long for us to render them fully, so
@@ -55,21 +56,29 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
 function HoundList({
   address,
   hounds,
+  parent1,
+  parent2,
   setHounds,
+  setParent1,
+  setParent2,
 }: {
   address: string;
   hounds: HoundInfo[];
+  parent1: HoundInfo | null;
+  parent2: HoundInfo | null;
   setHounds: Dispatch<SetStateAction<HoundInfo[]>>;
+  setParent1: Dispatch<SetStateAction<HoundInfo | null>>;
+  setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
 }): JSX.Element {
   const fetchHounds = async (address: string) => {
     const url = `https://api.granadanet.tzkt.io/v1/operations/transactions?sender=${address}&target=KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ&entrypoint=createHound`;
     const response = await fetch(url, { method: "GET" });
     const storage = await response.json();
-    const temporary = storage.map(
+    const tempHoundlist = storage.map(
       (hound: { parameter: { value: { genome: string; generation: number } } }) =>
         generateHound(hound.parameter.value.genome, hound.parameter.value.generation)
     );
-    setHounds(temporary);
+    setHounds(tempHoundlist);
   };
 
   useEffect(() => {
@@ -79,8 +88,70 @@ function HoundList({
   return (
     <div className="houndList">
       {hounds
-        ? hounds.map((hound, key) => <HoundCard key={key} hound={hound} width={140} height={140} />)
+        ? hounds.map((hound, index) => (
+            <HoundCard
+              key={index}
+              hound={hound}
+              width={CanvasWidth}
+              height={CanvasHeight}
+              onClick={() => {
+                if (!parent1) {
+                  setParent1(hounds[index]);
+                } else if (!parent2) {
+                  setParent2(hounds[index]);
+                }
+              }}
+            />
+          ))
         : "Loading..."}
+    </div>
+  );
+}
+
+const CanvasWidth = 140,
+  CanvasHeight = 140;
+
+function BreedSection({
+  parent1,
+  parent2,
+  setParent1,
+  setParent2,
+}: {
+  parent1: HoundInfo | null;
+  parent2: HoundInfo | null;
+  setParent1: Dispatch<SetStateAction<HoundInfo | null>>;
+  setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
+}): JSX.Element {
+  return (
+    <div className="breedSection">
+      <div className="breedSection__hounds">
+        <div className="breedSection__parent1">
+          {parent1 ? (
+            <HoundCard hound={parent1} width={CanvasWidth} height={CanvasHeight} />
+          ) : (
+            <EmptyCanvas width={CanvasWidth} height={CanvasHeight} backgroundColor="#ffd6f7" />
+          )}
+        </div>
+        <i className="fa fa-heart" style={{ color: "#ffd6f7", fontSize: "2rem" }}></i>
+        <div className="breedSection__parent2">
+          {parent2 ? (
+            <HoundCard hound={parent2} width={CanvasWidth} height={CanvasHeight} />
+          ) : (
+            <EmptyCanvas width={CanvasWidth} height={CanvasHeight} backgroundColor="#ffd6f7" />
+          )}
+        </div>
+      </div>
+      <div className="breedSection__btns">
+        <Button
+          onClick={() => {
+            setParent1(null);
+            setParent2(null);
+          }}
+        >
+          Clear
+        </Button>
+        <Button>Breed</Button>
+      </div>
     </div>
   );
 }
@@ -88,10 +159,30 @@ function HoundList({
 function UserProfile(): JSX.Element {
   const { address } = useParams() as { address: string };
   const [hounds, setHounds] = useState<HoundInfo[]>([]);
+  const wallet = useContext(WalletContext);
+  const [parent1, setParent1] = useState<HoundInfo | null>(null);
+  const [parent2, setParent2] = useState<HoundInfo | null>(null);
+
   return (
     <div className="userProfile">
       <ProfileHeader hounds={hounds} address={address} />
-      <HoundList address={address} hounds={hounds} setHounds={setHounds} />
+      <HoundList
+        parent1={parent1}
+        parent2={parent2}
+        setParent1={setParent1}
+        setParent2={setParent2}
+        address={address}
+        hounds={hounds}
+        setHounds={setHounds}
+      />
+      {wallet.userAddress == address ? (
+        <BreedSection
+          parent1={parent1}
+          parent2={parent2}
+          setParent1={setParent1}
+          setParent2={setParent2}
+        />
+      ) : null}
     </div>
   );
 }

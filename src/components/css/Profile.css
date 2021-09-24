@@ -106,3 +106,17 @@
     margin-bottom: 1rem;
   }
 }
+
+.breedSection__hounds {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.breedSection__btns {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}

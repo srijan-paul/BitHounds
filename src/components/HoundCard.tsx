@@ -7,10 +7,12 @@ export function HoundCanvas({
   painter,
   width,
   height,
+  isBreedingCandidate,
 }: {
   painter: CanvasRenderFunc;
   width?: number;
   height?: number;
+  isBreedingCandidate?: boolean;
 }): JSX.Element {
   const DefaultWidth = 200,
     DefaultHeight = 200;
@@ -26,17 +28,37 @@ export function HoundCanvas({
   }, []);
 
   return (
-    <div className="houndCanvasWrapper">
+    <div
+      className="houndCanvasWrapper"
+      style={{
+        backgroundColor: isBreedingCandidate ? "#ffd6f7" : "#c5eefa",
+      }}
+    >
       <canvas className="houndCanvas" width={width} height={height} ref={canvasRef}></canvas>
     </div>
   );
 }
 
-function EmptyCanvas(): JSX.Element {
+export function EmptyCanvas({
+  width,
+  height,
+  backgroundColor,
+}: {
+  width?: number;
+  height?: number;
+  backgroundColor?: string;
+}): JSX.Element {
   return (
-    <div className="houndCanvas">
-      I am empty
-      <canvas id="hound-canvas" width="200" height="200"></canvas>
+    <div
+      className="houndCanvas"
+      style={{
+        backgroundColor: backgroundColor || "#c5eefa",
+        padding: "25px 10px 0px 10px",
+        borderTopLeftRadius: "12px",
+        borderTopRightRadius: "12px",
+      }}
+    >
+      <canvas id="hound-canvas" width={width || "200"} height={height || "200"}></canvas>
     </div>
   );
 }
@@ -57,10 +79,14 @@ function HoundCard({
   hound,
   width,
   height,
+  isBreedingCandidate,
+  onClick,
 }: {
   hound: HoundInfo;
   width?: number;
   height?: number;
+  isBreedingCandidate?: boolean;
+  onClick?: (..._: any[]) => any;
 }): JSX.Element {
   const [houndRenderer, setHoundRenderer] = useState<CanvasRenderFunc | undefined>();
 
@@ -70,12 +96,17 @@ function HoundCard({
         setHoundRenderer(() => renderer);
       })
       .catch(console.error);
-  }, []);
+  }, [hound]);
 
   return (
-    <div className="houndCard">
+    <div className="houndCard" onClick={onClick}>
       {houndRenderer ? (
-        <HoundCanvas painter={houndRenderer} width={width} height={height} />
+        <HoundCanvas
+          painter={houndRenderer}
+          width={width}
+          height={height}
+          isBreedingCandidate={isBreedingCandidate}
+        />
       ) : (
         <EmptyCanvas />
       )}
