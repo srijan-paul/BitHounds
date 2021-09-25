@@ -31,7 +31,7 @@ class NFT(FA2.FA2):
                 self.data.total_supply[params.token_id] = 1
 
     @sp.entry_point
-    def single_transfer(self, params):
+    def transfer(self, params):
         current_from = params.from_
         if self.config.single_asset:
             sp.verify(params.token_id == 0, message = "single-asset: token-id <> 0")
@@ -54,7 +54,7 @@ class NFT(FA2.FA2):
 
 class Hound(sp.Contract):
     def __init__(self, contract_address):
-        self.init(hounds = {},counter = 0, contract_address = contract_address)
+        self.init(hounds = {}, market = {}, counter = 0, contract_address = contract_address)
 
     @sp.entry_point
     def createHound(self, params):
@@ -66,36 +66,27 @@ class Hound(sp.Contract):
         name = 'Hound NFT',
         symbol = 'Hound'
         )), sp.mutez(0), token_contract)
-        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.genome, isNew = True, timestamp = params.timestamp, generation = params.generation)
+        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.genome, onSale = False, timestamp = params.timestamp, generation = params.generation, price = params.price)
         self.data.counter+=1
 
     @sp.entry_point
-    def breed(self, params):
-        sp.verify(params.parent1!=params.parent2)
-        sp.set_type(params.parent1, sp.TNat)
-        sp.set_type(params.parent2, sp.TNat)
-        genome1 = self.data.hounds[params.parent1].genome
-        genome2 = self.data.hounds[params.parent2].genome
-        gen1 = self.data.hounds[params.parent1].generation
-        gen2 = self.data.hounds[params.parent2].generation
-        genChild = 1 + sp.max(gen1, gen2)
-        genomeChild = sp.string("")
-        random.seed(int(time.time()))
-        for i in range(0,40,4):
-            whichParent = random.randint(0,1)
-            if whichParent == 0:
-                genomeChild += sp.slice(genome1, i, 4).open_some()
-            elif whichParent == 1:
-                genomeChild += sp.slice(genome2, i, 4).open_some()
+    def sell(self, params):
+        hound = self.data.hounds[params.hound_id]
+        sp.verify(hound.owner == sp.sender)
+        hound.onSale = True
+        self.data.market[hound.token_id] = hound
 
-        token_contract = sp.contract(sp.TRecord(creator = sp.TAddress, metadata = sp.TMap(sp.TString, sp.TBytes),token_id = sp.TNat ), self.data.contract_address, entry_point = "mint").open_some()
-        sp.transfer(sp.record(creator = sp.sender, token_id = self.data.counter, metadata = FA2.FA2_token_metadata.make_metadata(
-        decimals = 0,
-        name = 'Hound NFT',
-        symbol = 'Hound'
-        )), sp.mutez(0), token_contract)
-        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = genomeChild, isNew = True, timestamp = 1923, generation = genChild)
-        self.data.counter+=1
+    @sp.entry_point
+    def buy(self, params):
+        hound = self.data.hounds[params.hound_id]
+        sp.verify(hound.onSale == True)
+        sp.verify(sp.amount == hound.price)
+        sp.send(hound.owner, sp.amount)
+        token_contract = sp.contract(sp.TRecord(from_ = sp.TAddress, to_ = sp.TAddress, token_id = sp.TNat), self.data.contract_address, entry_point = "transfer").open_some()
+        sp.transfer(sp.record(from_ = hound.owner, to_ = sp.sender, token_id = params.hound_id), sp.mutez(0), token_contract)
+        hound.owner = sp.sender
+        hound.onSale = False
+        del self.data.market[hound.token_id]
 
     
 
@@ -112,7 +103,7 @@ def test():
     c1 = Hound(nft.address)
     scenario += c1  
 
-    c1.createHound(genome = "8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", generation = 0, timestamp = 1324).run(sender = mark)
-    c1.createHound(genome = "0KJh1qxznoPSoIYacvyBAlfYmd14lsvQ4QzvLk2I", generation = 1, timestamp = 1532).run(sender = mark)
-    c1.breed(sp.record(parent1 = 0, parent2 = 1)).run(sender = mark)
-    c1.breed(sp.record(parent1 = 1 , parent2= 2)).run(sender = mark)
+    c1.createHound(genome = "8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", generation = 0, timestamp = 1324, price = sp.mutez(1)).run(sender = mark)
+    c1.createHound(genome = "otQMyicGthNPFnv52tmf8wUW7yRLqxTFFQ4Eisji", generation = 1, timestamp = 1532, price = sp.mutez(21)).run(sender = mark)
+    c1.sell(hound_id = 1).run(sender = mark)
+    c1.buy(hound_id = 1).run(sender = bill, amount=sp.mutez(21))
