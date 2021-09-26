@@ -75,30 +75,20 @@ export async function getRandomHoundRenderer(): Promise<CanvasRenderFunc> {
   };
 }
 
-// converts a number decoded from the Genome quadlet into an index that can be used
-// to look up the `parts.<body-part>` array.
-const MaxQuadLetValue = decodeBase62Quadlet("ZZZZ");
-export function genomeNumberToImageIndex(base10Quadlet: number): number {
-  assert(base10Quadlet >= 0 && base10Quadlet <= MaxQuadLetValue);
-  for (let i = 0; i < MaxTextureCount; ++i) {
-    if (
-      base10Quadlet >= (i / MaxTextureCount) * MaxQuadLetValue &&
-      base10Quadlet < ((i + 1) / MaxTextureCount) * MaxQuadLetValue
-    ) {
-      return i;
-    }
-  }
-  throw new Error(`Impossible quadlet: ${base10Quadlet}`);
+export function genomeNumberToImageIndex(featureNumber: number): number {
+  assert(featureNumber >= 0 && featureNumber < 62);
+  return featureNumber % MaxTextureCount;
 }
 
 export async function getRendererFromGenome(genome: string): Promise<CanvasRenderFunc> {
   const parts = await AssetLoader.instance.load();
-  const genomeQuadlets = decodeGenome(genome);
+  const genomeFeatures = decodeGenome(genome);
+  console.log(genomeFeatures);
 
   const partImages: HTMLImageElement[] = [];
 
   partNames.forEach((name, i) => {
-    const partIdx = genomeNumberToImageIndex(genomeQuadlets[name]);
+    const partIdx = genomeNumberToImageIndex(genomeFeatures[name]);
     assert(i >= 0 && i < parts.length);
     assert(partIdx >= 0 && partIdx < parts[i].length);
     partImages.push(parts[i][partIdx]);

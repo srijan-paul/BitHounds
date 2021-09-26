@@ -1,8 +1,10 @@
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
-import { HoundInfo, HoundRarity } from "../../scripts/hound-genome";
+import { breedHoundGenomes, HoundInfo, HoundRarity } from "../../scripts/hound-genome";
+import { buyHound } from "../../scripts/util";
 import Button from "../Button";
+import { TzContext } from "../context/TzToolKitContext";
 import { WalletContext } from "../context/WalletContext";
 import "../css/Profile.css";
 import HoundCard, { EmptyCanvas } from "../HoundCard";
@@ -53,6 +55,18 @@ function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: stri
   );
 }
 
+type BreedingInfo = {
+  childGenome: string;
+  setChildGenome: (g: string) => void;
+};
+
+const BreedInfoContext = React.createContext<BreedingInfo>({
+  childGenome: "",
+  setChildGenome(genome: string) {
+    this.childGenome = genome;
+  },
+});
+
 function HoundList({
   address,
   hounds,
@@ -95,10 +109,20 @@ function HoundList({
               width={CanvasWidth}
               height={CanvasHeight}
               onClick={() => {
+                let newParent1, newParent2;
                 if (!parent1) {
+                  newParent1 = hounds[index];
+                  newParent2 = parent2;
                   setParent1(hounds[index]);
                 } else if (!parent2) {
+                  newParent2 = hounds[index];
+                  newParent1 = parent1;
                   setParent2(hounds[index]);
+                }
+
+                if (newParent1 == newParent2 && newParent1 != null) {
+                  setParent1(null);
+                  setParent2(null);
                 }
               }}
             />
@@ -122,6 +146,9 @@ function BreedSection({
   setParent1: Dispatch<SetStateAction<HoundInfo | null>>;
   setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
 }): JSX.Element {
+  const breedingInfo = React.useContext(BreedInfoContext);
+  const { toolkit: TzToolkit } = React.useContext(TzContext);
+
   return (
     <div className="breedSection">
       <div className="breedSection__hounds">
@@ -150,7 +177,16 @@ function BreedSection({
         >
           Clear
         </Button>
-        <Button>Breed</Button>
+        <Button
+          onClick={async () => {
+            if (!parent1 || !parent2) return;
+            const crossedGenome = breedHoundGenomes(parent1.genome, parent2.genome);
+            breedingInfo.setChildGenome(crossedGenome);
+            await buyHound(TzToolkit, crossedGenome);
+          }}
+        >
+          Breed
+        </Button>
       </div>
     </div>
   );
