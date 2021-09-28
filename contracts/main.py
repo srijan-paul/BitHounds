@@ -108,3 +108,4 @@ def test():
     c1.createHound(genome = "otQMyicGthNPFnv52tmf8wUW7yRLqxTFFQ4Eisji", generation = 1, timestamp = 1532).run(sender = mark)
     c1.sell(hound_id = 1, price = sp.mutez(21)).run(sender = mark)
     c1.buy(hound_id = 1).run(sender = bill, amount=sp.mutez(21))
+    
