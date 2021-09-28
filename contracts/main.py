@@ -66,7 +66,7 @@ class Hound(sp.Contract):
         name = 'Hound NFT',
         symbol = 'Hound'
         )), sp.mutez(0), token_contract)
-        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.genome, onSale = False, timestamp = params.timestamp, generation = params.generation, price = params.price)
+        self.data.hounds[self.data.counter] = sp.record(token_id = self.data.counter, owner = sp.sender, creator = sp.sender, genome = params.genome, onSale = False, timestamp = params.timestamp, generation = params.generation, price = sp.mutez(0))
         self.data.counter+=1
 
     @sp.entry_point
@@ -74,6 +74,7 @@ class Hound(sp.Contract):
         hound = self.data.hounds[params.hound_id]
         sp.verify(hound.owner == sp.sender)
         hound.onSale = True
+        hound.price = params.price
         self.data.market[hound.token_id] = hound
 
     @sp.entry_point
@@ -103,7 +104,7 @@ def test():
     c1 = Hound(nft.address)
     scenario += c1  
 
-    c1.createHound(genome = "8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", generation = 0, timestamp = 1324, price = sp.mutez(1)).run(sender = mark)
-    c1.createHound(genome = "otQMyicGthNPFnv52tmf8wUW7yRLqxTFFQ4Eisji", generation = 1, timestamp = 1532, price = sp.mutez(21)).run(sender = mark)
-    c1.sell(hound_id = 1).run(sender = mark)
+    c1.createHound(genome = "8Bxh1qpQn2Xz6Ip0cAyzAbfLCdlUlPFw4Qzvjk2I", generation = 0, timestamp = 1324).run(sender = mark)
+    c1.createHound(genome = "otQMyicGthNPFnv52tmf8wUW7yRLqxTFFQ4Eisji", generation = 1, timestamp = 1532).run(sender = mark)
+    c1.sell(hound_id = 1, price = sp.mutez(21)).run(sender = mark)
     c1.buy(hound_id = 1).run(sender = bill, amount=sp.mutez(21))
