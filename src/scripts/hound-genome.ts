@@ -1,4 +1,12 @@
 import { assert } from "./util";
+import {
+  uniqueNamesGenerator,
+  Config,
+  adjectives,
+  names,
+  animals,
+  colors,
+} from "unique-names-generator";
 
 // maps a Hound's feature to it's corresponding number in the Genome.
 // eg: mouth -> 1202
@@ -13,12 +21,23 @@ export const enum HoundRarity {
   MYTHICAL = "mythical",
 }
 
+export type moon = "sanguine" | "blood" | "twilight";
+export type mood = "cool" | "angry" | "calm" | "funky" | "tired";
+
+export type HoundStats = {
+  mood: mood;
+  moon: moon;
+  traits: string[];
+  spiritAnimal: string;
+};
+
 export type HoundInfo = {
-  nick: string;
+  name: string;
   generation: number;
   id: number;
   genome: string;
   rarity: HoundRarity;
+  stats: HoundStats;
 };
 
 const isUpper = (code: number) => code >= 65 && code <= 90;
@@ -52,8 +71,8 @@ export function decodeBase62Quadlet(quadlet: string): number {
 
 export function decodeGenome(genome: string): HoundGenomeData {
   assert(genome.length == 40, "Invalid hound DNA sequence (must be 40 characters)");
-  const quadlets = genome.substring(0, 5);
-  const [base, eyes, mouth, horn] = Array.from(quadlets).map(base62CharToBase10Int);
+  const featureIds = genome.substring(0, 5);
+  const [base, eyes, mouth, horn] = Array.from(featureIds).map(base62CharToBase10Int);
 
   return {
     base,
@@ -84,4 +103,43 @@ export function breedHoundGenomes(parentA: string, parentB: string): string {
 
   assert(isGenomeValid(childGenome));
   return childGenome;
+}
+
+export const Moods: mood[] = ["cool", "angry", "calm", "funky", "tired"];
+export const Moons: moon[] = ["sanguine", "blood", "twilight"];
+export function houndInfoFromGenome(genome: string): HoundInfo {
+  assert(isGenomeValid(genome));
+  const featureIds = genome.substring(6, 10);
+  const mood = Moods[featureIds.charCodeAt(0) % Moods.length];
+  const moon = Moons[featureIds.charCodeAt(1) % Moons.length];
+
+  const config: Config = {
+    dictionaries: [adjectives, colors, animals],
+    separator: "",
+    seed: base62ToBase10(featureIds.charCodeAt(2)),
+  };
+
+  const spiritAnimal = uniqueNamesGenerator(config);
+  const stats: HoundStats = {
+    mood,
+    moon,
+    spiritAnimal,
+    traits: [],
+  };
+
+  const nameConfig: Config = {
+    dictionaries: [names],
+    seed: base62CharToBase10Int(featureIds.charAt(3)),
+  };
+
+  const name = uniqueNamesGenerator(nameConfig);
+
+  return {
+    stats,
+    generation: 0,
+    id: Math.floor(2000 + Math.random() * 1000),
+    genome,
+    rarity: HoundRarity.COMMON,
+    name,
+  };
 }

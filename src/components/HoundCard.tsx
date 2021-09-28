@@ -64,12 +64,17 @@ export function EmptyCanvas({
 }
 
 function HoundLabel({ info }: { info: HoundInfo }): JSX.Element {
+  const maxGenomeLen = 10;
+  const genome = info.genome;
   return (
     <div className="houndLabel">
-      <div className="houndLabel__id">#{info.id}</div>
+      <div className="houndLabel__id">{info.name}</div>
       <div className="houndLabel__info">
         <div className="houndLabel__info__gen">Gen {info.generation} </div>
         <div className="houndLabel__info__rarity">{info.rarity}</div>
+        <a className="houndLabel__info__profile">
+          {genome.length >= maxGenomeLen ? genome.substring(0, maxGenomeLen) + "..." : genome}
+        </a>
       </div>
     </div>
   );

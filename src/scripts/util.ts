@@ -1,4 +1,4 @@
-import { TezosToolkit } from "@taquito/taquito";
+import { ContractAbstraction, Wallet } from "@taquito/taquito";
 import { AssertionError } from "assert";
 // Returns a random integer
 export function randInt(lo: number, hi: number): number {
@@ -37,8 +37,7 @@ export function shortString(str: string, limit = 20): string {
   return str.substring(0, limit - 3) + "...";
 }
 
-export async function buyHound(tzToolkit: TezosToolkit, genome: string): Promise<void> {
-  const contract = await tzToolkit.wallet.at("KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ");
+export async function buyHound(contract: ContractAbstraction<Wallet>, genome: string): Promise<void> {
   try {
     const op = await contract.methods.createHound(3, genome, 0).send();
     await op.confirmation();

@@ -1,7 +1,8 @@
+import { ContractAbstraction, Wallet } from "@taquito/taquito";
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
-import { breedHoundGenomes, HoundInfo, HoundRarity } from "../../scripts/hound-genome";
+import { breedHoundGenomes, HoundInfo, houndInfoFromGenome } from "../../scripts/hound-genome";
 import { buyHound } from "../../scripts/util";
 import Button from "../Button";
 import { TzContext } from "../context/TzToolKitContext";
@@ -13,16 +14,6 @@ import UseContract from "../UpdateContract";
 // Wallet addresses can be too long for us to render them fully, so
 // we only render a substring.
 const MaxAddressLen = 12;
-
-const generateHound = (genome: string, generation: number): HoundInfo => {
-  return {
-    nick: "Hound",
-    generation: generation,
-    id: Math.ceil(1241 + Math.random() * 2000),
-    genome: genome,
-    rarity: HoundRarity.COMMON,
-  };
-};
 
 function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
   const walletInfo = React.useContext(WalletContext);
@@ -90,7 +81,7 @@ function HoundList({
     const storage = await response.json();
     const tempHoundlist = storage.map(
       (hound: { parameter: { value: { genome: string; generation: number } } }) =>
-        generateHound(hound.parameter.value.genome, hound.parameter.value.generation)
+        houndInfoFromGenome(hound.parameter.value.genome)
     );
     setHounds(tempHoundlist);
   };
@@ -147,7 +138,7 @@ function BreedSection({
   setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
 }): JSX.Element {
   const breedingInfo = React.useContext(BreedInfoContext);
-  const { toolkit: TzToolkit } = React.useContext(TzContext);
+  const tzContext = React.useContext(TzContext);
 
   return (
     <div className="breedSection">
@@ -182,7 +173,7 @@ function BreedSection({
             if (!parent1 || !parent2) return;
             const crossedGenome = breedHoundGenomes(parent1.genome, parent2.genome);
             breedingInfo.setChildGenome(crossedGenome);
-            await buyHound(TzToolkit, crossedGenome);
+            await buyHound(tzContext.contract as ContractAbstraction<Wallet>, crossedGenome);
           }}
         >
           Breed

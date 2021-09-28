@@ -1,5 +1,5 @@
 import { assert, randChoice } from "./util";
-import { decodeBase62Quadlet, decodeGenome } from "./hound-genome";
+import { decodeGenome } from "./hound-genome";
 
 async function loadImageFromPath(path: string): Promise<HTMLImageElement> {
   return new Promise((resolve) => {
@@ -83,7 +83,6 @@ export function genomeNumberToImageIndex(featureNumber: number): number {
 export async function getRendererFromGenome(genome: string): Promise<CanvasRenderFunc> {
   const parts = await AssetLoader.instance.load();
   const genomeFeatures = decodeGenome(genome);
-  console.log(genomeFeatures);
 
   const partImages: HTMLImageElement[] = [];
 

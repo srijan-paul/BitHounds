@@ -65,6 +65,7 @@ function ConnectButton({ setPublicToken, setWalletConnected }: ButtonProps): JSX
       // TODO (@srijan): why do I have to cast the wallet twice here?
       tzContext.toolkit.setWalletProvider(wallet as unknown as WalletProvider);
       tzContext.setToolkit(tzContext.toolkit);
+      await tzContext.loadContract();
 
       console.log(tzContext.toolkit.signer, "<- is the signer");
 
