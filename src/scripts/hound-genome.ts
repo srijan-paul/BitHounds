@@ -114,17 +114,25 @@ export function houndInfoFromGenome(genome: string): HoundInfo {
   const moon = Moons[featureIds.charCodeAt(1) % Moons.length];
 
   const config: Config = {
-    dictionaries: [adjectives, colors, animals],
-    separator: "",
+    dictionaries: [colors, animals],
+    separator: " ",
     seed: base62ToBase10(featureIds.charCodeAt(2)),
   };
 
   const spiritAnimal = uniqueNamesGenerator(config);
+  const traits = Array.from(featureIds).map((char) => {
+    const conf: Config = {
+      dictionaries: [adjectives],
+      seed: base62CharToBase10Int(char),
+    };
+    return uniqueNamesGenerator(conf);
+  });
+  
   const stats: HoundStats = {
     mood,
     moon,
     spiritAnimal,
-    traits: [],
+    traits: traits,
   };
 
   const nameConfig: Config = {

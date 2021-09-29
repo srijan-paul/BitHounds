@@ -1,0 +1,37 @@
+.houndInfo {
+  width: 50%;
+  margin: auto;
+  margin-top: 3rem;
+  text-align: center;
+  font-family: "Rubik";
+}
+
+.houndInfo__wrapper {
+  display: flex;
+  gap: 2rem;
+}
+
+.houndInfo__data {
+  text-align: left;
+}
+
+.houndInfo__name {
+  font-size: 2rem;
+}
+
+.houndInfo__label {
+  border: 1px solid var(--sig-color);
+  border-radius: 10px;
+  padding: 0 0.5rem;
+}
+
+.houndInfo__stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.86rem;
+  color: var(--sig-color);
+}
+
+.houndInfo__field {
+  font-size: 1rem;
+}
