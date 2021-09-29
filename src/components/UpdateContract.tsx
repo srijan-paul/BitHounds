@@ -3,9 +3,11 @@ import "./css/Profile.css";
 import React from "react";
 import { TzContext } from "./context/TzToolKitContext";
 import { randomBase62 } from "../scripts/util";
+import { WalletContext } from "./context/WalletContext";
 
 function UseContract(): JSX.Element {
   const TzToolkit = React.useContext(TzContext).toolkit;
+  const walletInfo = React.useContext(WalletContext);
 
   const buy = async (): Promise<void> => {
     const contract = await TzToolkit.wallet.at("KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ");
@@ -13,6 +15,9 @@ function UseContract(): JSX.Element {
       const genome = randomBase62(40);
       const op = await contract.methods.createHound(3, genome, 0).send();
       await op.confirmation();
+      const url = `http://localhost:8080/mint?creator=${walletInfo.userAddress}&genome=${genome}`;
+      const response = await fetch(url, { method: "POST"});
+      console.log(response);
     } catch (error) {
       console.error(error);
     }
