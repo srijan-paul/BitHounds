@@ -19,9 +19,8 @@ const defaultContext: TzContext = {
   contractStorage: null,
   async loadContract() {
     const wallet = this.toolkit.wallet;
-    this.contract = await wallet.at("KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ");
+    this.contract = await wallet.at("KT1TJMp3voDJ5WV97AA5k6RvZRjLQ3QQXTqp");
     this.contractStorage = await this.contract.storage();
-    console.log(this.contractStorage.hounds.valueMap);
   }
 };
 

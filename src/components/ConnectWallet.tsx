@@ -18,7 +18,41 @@ function ConnectButton({ setPublicToken, setWalletConnected }: ButtonProps): JSX
   const tzContext = useContext(TzContext);
   const [isConnected, setConnected] = React.useState<boolean>(Boolean(walletInfo.wallet));
 
-  async function connectWallet() {
+  const initTzContext = async () => {
+    if (walletInfo.userAddress && walletInfo.wallet) return;
+
+    const wallet = new BeaconWallet({
+      name: "Taquito Boilerplate",
+      preferredNetwork: NetworkType.GRANADANET,
+      disableDefaultEvents: true,
+      eventHandlers: {
+        [BeaconEvent.PAIR_INIT]: {
+          handler: defaultEventCallbacks.PAIR_INIT,
+        },
+        [BeaconEvent.PAIR_SUCCESS]: {
+          handler: (data) => setPublicToken(data.publicKey),
+        },
+      },
+    });
+
+    // TODO (@srijan): why do I have to cast the wallet twice here?
+    tzContext.toolkit.setWalletProvider(wallet as unknown as WalletProvider);
+    tzContext.setToolkit(tzContext.toolkit);
+    await tzContext.loadContract();
+
+    console.log(tzContext.toolkit.signer, "<- is the signer");
+
+    walletInfo.setWallet(wallet);
+    const activeAccount = await wallet.client.getActiveAccount();
+    if (activeAccount) {
+      const userAddress = await wallet.getPKH();
+      walletInfo.setAddress(userAddress);
+    }
+  };
+
+  const connectWallet = async () => {
+    // if (!walletInfo.wallet) await initTzContext();
+
     const wallet = walletInfo.wallet as BeaconWallet;
 
     try {
@@ -39,43 +73,12 @@ function ConnectButton({ setPublicToken, setWalletConnected }: ButtonProps): JSX
       setWalletConnected(true);
       console.log(walletInfo.userAddress, "<- Is the user address");
     } catch (error) {
-      console.error(error);
       setWalletConnected(false);
     }
-  }
+  };
 
   useEffect(() => {
-    (async () => {
-      if (walletInfo.userAddress && walletInfo.wallet) return;
-
-      const wallet = new BeaconWallet({
-        name: "Taquito Boilerplate",
-        preferredNetwork: NetworkType.GRANADANET,
-        disableDefaultEvents: true,
-        eventHandlers: {
-          [BeaconEvent.PAIR_INIT]: {
-            handler: defaultEventCallbacks.PAIR_INIT,
-          },
-          [BeaconEvent.PAIR_SUCCESS]: {
-            handler: (data) => setPublicToken(data.publicKey),
-          },
-        },
-      });
-
-      // TODO (@srijan): why do I have to cast the wallet twice here?
-      tzContext.toolkit.setWalletProvider(wallet as unknown as WalletProvider);
-      tzContext.setToolkit(tzContext.toolkit);
-      await tzContext.loadContract();
-
-      console.log(tzContext.toolkit.signer, "<- is the signer");
-
-      walletInfo.setWallet(wallet);
-      const activeAccount = await wallet.client.getActiveAccount();
-      if (activeAccount) {
-        const userAddress = await wallet.getPKH();
-        walletInfo.setAddress(userAddress);
-      }
-    })();
+    initTzContext();
   }, []);
 
   if (!isConnected) {

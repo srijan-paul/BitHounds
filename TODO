@@ -4,3 +4,5 @@
 - Deploy the contract
 - Sometimes we need to connect the wallet twice.
 - "contractStorage is null" error
+- Have to reload the entire site after every breed to see changes.
+- Need to click on `connect` button multiple times.

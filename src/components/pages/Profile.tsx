@@ -81,11 +81,9 @@ function HoundList({
   setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
 }): JSX.Element {
   const tzContext = useContext(TzContext);
-  const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
-
-  console.log(tzContext.contractStorage.hounds.valueMap);
 
   const fetchHounds = async (address: string) => {
+    const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
     const houndList = Array.from(houndMap)
       .filter(([, hound]) => hound.creator == address)
       .map(([, hound]) => houndInfoFromGenome(hound.genome));

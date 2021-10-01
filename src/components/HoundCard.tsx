@@ -107,7 +107,7 @@ function HoundCard({
   }, [hound]);
 
   return (
-    <div className="houndCard" onClick={onClick}>
+    <div className="houndCard" onClick={onClick} style={{ width: width }}>
       {houndRenderer ? (
         <HoundCanvas
           painter={houndRenderer}
