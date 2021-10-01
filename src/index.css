@@ -48,6 +48,17 @@ p {
   color: (--sig-color);
 }
 
+.numberInput {
+  outline: none;
+  border: 1px solid var(--clr-faded);
+  border-radius: 25px;
+  padding: 8px 20px;
+}
+
+.numberInput:active, .numberInput:focus {
+  border: 1px solid var(--sig-color-1);
+}
+
 @media only screen and (max-width: 650px) {
   body {
     font-size: 1rem;

@@ -20,7 +20,14 @@ import UseContract from "../UpdateContract";
 // we only render a substring.
 const MaxAddressLen = 12;
 
-function ProfileHeader({ hounds, address }: { hounds: HoundInfo[]; address: string }): JSX.Element {
+type HoundListEntry = {
+  houndInfo: HoundInfo;
+  id: string;
+};
+
+type HoundList = Array<HoundListEntry>;
+
+function ProfileHeader({ hounds, address }: { hounds: HoundList; address: string }): JSX.Element {
   const walletInfo = React.useContext(WalletContext);
   const { userAddress } = walletInfo;
 
@@ -73,20 +80,23 @@ function HoundList({
   setParent2,
 }: {
   address: string;
-  hounds: HoundInfo[];
-  parent1: HoundInfo | null;
-  parent2: HoundInfo | null;
-  setHounds: Dispatch<SetStateAction<HoundInfo[]>>;
-  setParent1: Dispatch<SetStateAction<HoundInfo | null>>;
-  setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
+  hounds: HoundList;
+  parent1: HoundListEntry | null;
+  parent2: HoundListEntry | null;
+  setHounds: Dispatch<SetStateAction<HoundList>>;
+  setParent1: Dispatch<SetStateAction<HoundListEntry | null>>;
+  setParent2: Dispatch<SetStateAction<HoundListEntry | null>>;
 }): JSX.Element {
   const tzContext = useContext(TzContext);
 
   const fetchHounds = async (address: string) => {
     const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
-    const houndList = Array.from(houndMap)
+    const houndList: HoundList = Array.from(houndMap)
       .filter(([, hound]) => hound.creator == address)
-      .map(([, hound]) => houndInfoFromGenome(hound.genome));
+      .map(([id, hound]) => ({
+        id: id.substring(1, id.length - 1),
+        houndInfo: houndInfoFromGenome(hound.genome),
+      }));
 
     setHounds(houndList);
   };
@@ -101,9 +111,10 @@ function HoundList({
         ? hounds.map((hound, index) => (
             <HoundCard
               key={index}
-              hound={hound}
+              hound={hound.houndInfo}
               width={CanvasWidth}
               height={CanvasHeight}
+              id={hound.id}
               onClick={() => {
                 let newParent1, newParent2;
                 if (!parent1) {
@@ -137,10 +148,10 @@ function BreedSection({
   setParent1,
   setParent2,
 }: {
-  parent1: HoundInfo | null;
-  parent2: HoundInfo | null;
-  setParent1: Dispatch<SetStateAction<HoundInfo | null>>;
-  setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
+  parent1: HoundListEntry | null;
+  parent2: HoundListEntry | null;
+  setParent1: Dispatch<SetStateAction<HoundListEntry | null>>;
+  setParent2: Dispatch<SetStateAction<HoundListEntry | null>>;
 }): JSX.Element {
   const breedingInfo = React.useContext(BreedInfoContext);
   const tzContext = React.useContext(TzContext);
@@ -150,7 +161,12 @@ function BreedSection({
       <div className="breedSection__hounds">
         <div className="breedSection__parent1">
           {parent1 ? (
-            <HoundCard hound={parent1} width={CanvasWidth} height={CanvasHeight} />
+            <HoundCard
+              hound={parent1.houndInfo}
+              width={CanvasWidth}
+              height={CanvasHeight}
+              id={parent1.id}
+            />
           ) : (
             <EmptyCanvas width={CanvasWidth} height={CanvasHeight} backgroundColor="#ffd6f7" />
           )}
@@ -158,7 +174,12 @@ function BreedSection({
         <i className="fa fa-heart" style={{ color: "#ffd6f7", fontSize: "2rem" }}></i>
         <div className="breedSection__parent2">
           {parent2 ? (
-            <HoundCard hound={parent2} width={CanvasWidth} height={CanvasHeight} />
+            <HoundCard
+              hound={parent2.houndInfo}
+              width={CanvasWidth}
+              height={CanvasHeight}
+              id={parent2.id}
+            />
           ) : (
             <EmptyCanvas width={CanvasWidth} height={CanvasHeight} backgroundColor="#ffd6f7" />
           )}
@@ -176,7 +197,10 @@ function BreedSection({
         <Button
           onClick={async () => {
             if (!parent1 || !parent2) return;
-            const crossedGenome = breedHoundGenomes(parent1.genome, parent2.genome);
+            const crossedGenome = breedHoundGenomes(
+              parent1.houndInfo.genome,
+              parent2.houndInfo.genome
+            );
             breedingInfo.setChildGenome(crossedGenome);
             await buyHound(tzContext.contract as ContractAbstraction<Wallet>, crossedGenome);
           }}
@@ -190,10 +214,10 @@ function BreedSection({
 
 function UserProfile(): JSX.Element {
   const { address } = useParams() as { address: string };
-  const [hounds, setHounds] = useState<HoundInfo[]>([]);
+  const [hounds, setHounds] = useState<HoundList>([]);
   const wallet = useContext(WalletContext);
-  const [parent1, setParent1] = useState<HoundInfo | null>(null);
-  const [parent2, setParent2] = useState<HoundInfo | null>(null);
+  const [parent1, setParent1] = useState<HoundListEntry | null>(null);
+  const [parent2, setParent2] = useState<HoundListEntry | null>(null);
 
   return (
     <div className="userProfile">

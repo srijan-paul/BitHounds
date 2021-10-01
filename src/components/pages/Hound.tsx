@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { houndInfoFromGenome } from "../../scripts/hound-genome";
+import { ContractHound, houndInfoFromGenome } from "../../scripts/hound-genome";
 import { EmptyCanvas, HoundCanvas } from "../HoundCard";
 import { CanvasRenderFunc, getRendererFromGenome } from "../../scripts/generate-hounds";
 import "../css/HoundInfo.css";
+import { TzContext } from "../context/TzToolKitContext";
+import Button from "../Button";
+import { WalletContext } from "../context/WalletContext";
 
 const CanvasWidth = 200,
   CanvasHeight = 200;
@@ -21,8 +24,15 @@ function HoundStats({ labels }: { labels: string[] }): JSX.Element {
 }
 
 function Hound(): JSX.Element {
-  const { genome } = useParams() as { genome: string };
-  const houndInfo = houndInfoFromGenome(genome);
+  const tzContext = useContext(TzContext);
+  const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
+  const { id } = useParams() as { id: string };
+  const contractHound = houndMap.get(`"${id}"`) as ContractHound;
+  const houndInfo = houndInfoFromGenome(contractHound.genome);
+  const priceRef = React.useRef(null);
+
+  const walletInfo = useContext(WalletContext);
+
   const [houndRenderer, setHoundRenderer] = useState<CanvasRenderFunc | undefined>();
 
   useEffect(() => {
@@ -59,6 +69,18 @@ function Hound(): JSX.Element {
           <div className="houndInfo__field">Spriti Animal: {houndInfo.stats.spiritAnimal}</div>
         </div>
       </div>
+
+      {walletInfo.userAddress == contractHound.creator ? (
+        <div
+          className="houndInfo__sell"
+          style={{ textAlign: "left", marginTop: "2rem" }}
+        >
+          <input type="number" name="price" className="numberInput" ref={priceRef} />
+          &nbsp;
+          &nbsp;
+          <Button>Sell</Button>
+        </div>
+      ) : null}
     </div>
   );
 }

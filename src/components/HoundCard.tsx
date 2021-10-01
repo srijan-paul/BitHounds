@@ -64,7 +64,7 @@ export function EmptyCanvas({
   );
 }
 
-function HoundLabel({ info }: { info: HoundInfo }): JSX.Element {
+function HoundLabel({ info, id }: { info: HoundInfo; id: string }): JSX.Element {
   const maxGenomeLen = 10;
   const genome = info.genome;
   const history = useHistory();
@@ -75,7 +75,7 @@ function HoundLabel({ info }: { info: HoundInfo }): JSX.Element {
       <div className="houndLabel__info">
         <div className="houndLabel__info__gen">Gen {info.generation} </div>
         <div className="houndLabel__info__rarity">{info.rarity}</div>
-        <div className="houndLabel__info__profile" onClick={() => history.push(`/hound/${genome}`)}>
+        <div className="houndLabel__info__profile" onClick={() => history.push(`/hound/${id}`)}>
           {genome.length >= maxGenomeLen ? genome.substring(0, maxGenomeLen) + "..." : genome}
         </div>
       </div>
@@ -89,11 +89,13 @@ function HoundCard({
   height,
   isBreedingCandidate,
   onClick,
+  id,
 }: {
   hound: HoundInfo;
   width?: number;
   height?: number;
   isBreedingCandidate?: boolean;
+  id: string;
   onClick?: (..._: any[]) => any;
 }): JSX.Element {
   const [houndRenderer, setHoundRenderer] = useState<CanvasRenderFunc | undefined>();
@@ -118,7 +120,7 @@ function HoundCard({
       ) : (
         <EmptyCanvas />
       )}
-      <HoundLabel info={hound} />
+      <HoundLabel info={hound} id={id} />
     </div>
   );
 }

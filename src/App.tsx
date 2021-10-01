@@ -28,7 +28,7 @@ function App(): JSX.Element {
             <Search />
           </Route>
 
-          <Route path="/hound/:genome">
+          <Route path="/hound/:id">
             <Hound />
           </Route>
         </Switch>
