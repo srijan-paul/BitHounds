@@ -40,6 +40,12 @@ export type HoundInfo = {
   stats: HoundStats;
 };
 
+export type ContractHound = {
+  creator: string;
+  genome: string;
+  isNew: boolean;
+};
+
 const isUpper = (code: number) => code >= 65 && code <= 90;
 const isLower = (code: number) => code >= 97 && code <= 122;
 const isDigit = (code: number) => code >= 48 && code <= 57;
@@ -127,7 +133,7 @@ export function houndInfoFromGenome(genome: string): HoundInfo {
     };
     return uniqueNamesGenerator(conf);
   });
-  
+
   const stats: HoundStats = {
     mood,
     moon,

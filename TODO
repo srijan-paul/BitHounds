@@ -1,0 +1,6 @@
+- Buy / sell on the contract
+- Buy / Sell on the frontend
+- Store hound generation and parents in the contract.
+- Deploy the contract
+- Sometimes we need to connect the wallet twice.
+- "contractStorage is null" error

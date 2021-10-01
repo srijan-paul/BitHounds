@@ -2,7 +2,12 @@ import { ContractAbstraction, Wallet } from "@taquito/taquito";
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
-import { breedHoundGenomes, HoundInfo, houndInfoFromGenome } from "../../scripts/hound-genome";
+import {
+  breedHoundGenomes,
+  ContractHound,
+  HoundInfo,
+  houndInfoFromGenome,
+} from "../../scripts/hound-genome";
 import { buyHound } from "../../scripts/util";
 import Button from "../Button";
 import { TzContext } from "../context/TzToolKitContext";
@@ -75,15 +80,17 @@ function HoundList({
   setParent1: Dispatch<SetStateAction<HoundInfo | null>>;
   setParent2: Dispatch<SetStateAction<HoundInfo | null>>;
 }): JSX.Element {
+  const tzContext = useContext(TzContext);
+  const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
+
+  console.log(tzContext.contractStorage.hounds.valueMap);
+
   const fetchHounds = async (address: string) => {
-    const url = `https://api.granadanet.tzkt.io/v1/operations/transactions?sender=${address}&target=KT1LFf3MEDg4uZCtYHw4RM5zpuJEvF2NPYsJ&entrypoint=createHound`;
-    const response = await fetch(url, { method: "GET" });
-    const storage = await response.json();
-    const tempHoundlist = storage.map(
-      (hound: { parameter: { value: { genome: string; generation: number } } }) =>
-        houndInfoFromGenome(hound.parameter.value.genome)
-    );
-    setHounds(tempHoundlist);
+    const houndList = Array.from(houndMap)
+      .filter(([, hound]) => hound.creator == address)
+      .map(([, hound]) => houndInfoFromGenome(hound.genome));
+
+    setHounds(houndList);
   };
 
   useEffect(() => {
