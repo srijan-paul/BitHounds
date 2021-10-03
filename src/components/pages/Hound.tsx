@@ -62,7 +62,7 @@ function Hound(): JSX.Element {
 
     const op = await contract.methods
       .buy(houndId)
-      .send({ amount: (contractHound.price.c as number[])[0] });
+      .send({ amount: (contractHound.price.c as number[])[0], mutez: true });
 
     await op.confirmation();
   };
