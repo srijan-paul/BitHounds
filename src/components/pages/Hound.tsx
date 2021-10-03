@@ -56,9 +56,7 @@ function Hound(): JSX.Element {
   const purchaseHound = async () => {
     const houndId = parseInt(id);
     const { contract } = tzContext;
-    if (!contract) {
-      return;
-    }
+    if (!contract) return;
 
     const op = await contract.methods
       .buy(houndId)

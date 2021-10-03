@@ -25,7 +25,7 @@ function HoundList(): JSX.Element {
   });
 
   return (
-    <div className="market_Catalogue">
+    <div className="market__houndList">
       {houndList.map(({ hound, id, price }, index) => (
         <HoundCard hound={hound} key={index} id={id} width={150} height={150} price={price} />
       ))}
