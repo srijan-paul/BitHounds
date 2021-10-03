@@ -8,7 +8,12 @@
 
 .houndInfo__wrapper {
   display: flex;
+  padding: 2rem;
   gap: 2rem;
+  border-radius: 25px;
+  border: 0.5px solid var(--clr-faded);
+  max-width: 610px;
+  margin: auto;
 }
 
 .houndInfo__data {
@@ -43,3 +48,18 @@
   margin-top: 0.5rem;
 }
 
+.houndInfo__sell {
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+@media only screen and (max-width: 1210px) {
+  .houndInfo__wrapper {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+}

@@ -79,8 +79,11 @@ function Hound(): JSX.Element {
         <div
           className="houndInfo__canvas"
           style={{
-            maxWidth: CanvasWidth,
-            maxHeight: CanvasHeight,
+            minWidth: CanvasWidth,
+            minHeight: CanvasHeight,
+            width: CanvasWidth,
+            height: CanvasHeight,
+            borderRadius: "25px"
           }}
         >
           {houndRenderer ? (
@@ -105,7 +108,7 @@ function Hound(): JSX.Element {
           if (contractHound.onSale) {
             return (
               <div className="houndInfo__onSale">
-                &nbsp; On sale for {(contractHound.price.c as number[])[0] / 1_000_000} ꜩ 
+                &nbsp; On sale for {(contractHound.price.c as number[])[0] / 1_000_000} ꜩ
               </div>
             );
           } else {
@@ -121,7 +124,7 @@ function Hound(): JSX.Element {
 
         if (walletInfo.userAddress != contractHound.creator && contractHound.onSale) {
           return (
-            <div className="houndInf__buy">
+            <div className="houndInfo__buy">
               <Button onClick={purchaseHound}> Buy</Button>
             </div>
           );
