@@ -1,4 +1,3 @@
-import { ContractAbstraction, Wallet } from "@taquito/taquito";
 import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import DefaultProfilePic from "../../assets/default-user.png";
@@ -202,7 +201,7 @@ function BreedSection({
               parent2.houndInfo.genome
             );
             breedingInfo.setChildGenome(crossedGenome);
-            await buyHound(tzContext.contract as ContractAbstraction<Wallet>, crossedGenome);
+            await buyHound(tzContext, crossedGenome);
           }}
         >
           Breed

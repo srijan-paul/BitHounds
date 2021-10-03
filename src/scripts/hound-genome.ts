@@ -61,20 +61,6 @@ const base62CharToBase10Int = (char: string) => {
   return base62ToBase10(char.charCodeAt(0));
 };
 
-export function decodeBase62Quadlet(quadlet: string): number {
-  assert(quadlet.length == 4, "expected a string of length 4");
-
-  let ret = 0;
-  let pow = quadlet.length - 1;
-  for (let i = 0; i < quadlet.length; ++i) {
-    const ascii = quadlet.charCodeAt(i);
-    ret += base62ToBase10(ascii) * Math.pow(62, pow);
-    --pow;
-  }
-
-  return ret;
-}
-
 export function decodeGenome(genome: string): HoundGenomeData {
   assert(genome.length == 40, "Invalid hound DNA sequence (must be 40 characters)");
   const featureIds = genome.substring(0, 5);

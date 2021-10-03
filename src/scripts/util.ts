@@ -1,5 +1,5 @@
-import { ContractAbstraction, Wallet } from "@taquito/taquito";
 import { AssertionError } from "assert";
+import { TzContext } from "../components/context/TzToolKitContext";
 // Returns a random integer
 export function randInt(lo: number, hi: number): number {
   return Math.floor(lo + Math.random() * hi);
@@ -37,10 +37,14 @@ export function shortString(str: string, limit = 20): string {
   return str.substring(0, limit - 3) + "...";
 }
 
-export async function buyHound(contract: ContractAbstraction<Wallet>, genome: string): Promise<void> {
+export async function buyHound(tzContext: TzContext, genome: string): Promise<void> {
   try {
+    const contract = tzContext.contract;
+    if (!contract) return;
+
     const op = await contract.methods.createHound(3, genome, 0).send();
     await op.confirmation();
+    await tzContext.loadContract();
   } catch (error) {
     console.error(error);
   }

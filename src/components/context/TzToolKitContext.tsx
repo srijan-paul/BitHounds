@@ -2,7 +2,7 @@ import React from "react";
 import { ContractAbstraction, TezosToolkit, Wallet } from "@taquito/taquito";
 import PropTypes from "prop-types";
 
-type TzContext = {
+export type TzContext = {
   toolkit: TezosToolkit;
   setToolkit: (tk: TezosToolkit) => void;
   contract: ContractAbstraction<Wallet> | null;

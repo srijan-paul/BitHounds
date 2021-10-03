@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Home from "./components/pages/Home";
 import UserProfile from "./components/pages/Profile";
 import Navbar from "./components/Navbar";
@@ -7,6 +7,15 @@ import Search from "./components/pages/Search";
 import Hound from "./components/pages/Hound";
 
 function App(): JSX.Element {
+  // const tzContext = React.useContext(TzContext);
+  // const walletContext = React.useContext(WalletContext);
+
+  
+
+  useEffect(() => {
+    console.log("x");
+  }, []);
+
   return (
     <div className="App">
       <BrowserRouter>

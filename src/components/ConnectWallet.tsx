@@ -18,6 +18,20 @@ function ConnectButton({ setPublicToken, setWalletConnected }: ButtonProps): JSX
   const tzContext = useContext(TzContext);
   const [isConnected, setConnected] = React.useState<boolean>(Boolean(walletInfo.wallet));
 
+  const initWallet = async (wallet: BeaconWallet) => {
+    await wallet.requestPermissions({
+      network: {
+        type: NetworkType.GRANADANET,
+        rpcUrl: "https://api.tez.ie/rpc/granadanet",
+      },
+    });
+    const userAddress = await wallet.getPKH();
+    walletInfo.setAddress(userAddress);
+    setWalletConnected(true);
+    setConnected(true);
+    console.log(walletInfo.userAddress, "<- Is the user address");
+  };
+
   const initTzContext = async () => {
     if (walletInfo.userAddress && walletInfo.wallet) return;
 
@@ -47,31 +61,22 @@ function ConnectButton({ setPublicToken, setWalletConnected }: ButtonProps): JSX
     if (activeAccount) {
       const userAddress = await wallet.getPKH();
       walletInfo.setAddress(userAddress);
+      setConnected(true);
+    } else {
+      initWallet(wallet);
     }
   };
 
   const connectWallet = async () => {
-    // if (!walletInfo.wallet) await initTzContext();
-
     const wallet = walletInfo.wallet as BeaconWallet;
 
     try {
       const activeAccount = await wallet.client.getActiveAccount();
       if (activeAccount) {
         setConnected(true);
-        return;
+      } else {
+        initWallet(wallet);
       }
-
-      await wallet.requestPermissions({
-        network: {
-          type: NetworkType.GRANADANET,
-          rpcUrl: "https://api.tez.ie/rpc/granadanet",
-        },
-      });
-      const userAddress = await wallet.getPKH();
-      walletInfo.setAddress(userAddress);
-      setWalletConnected(true);
-      console.log(walletInfo.userAddress, "<- Is the user address");
     } catch (error) {
       setWalletConnected(false);
     }
