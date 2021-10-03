@@ -105,7 +105,7 @@ function Hound(): JSX.Element {
           if (contractHound.onSale) {
             return (
               <div className="houndInfo__onSale">
-                &nbsp; On sale for {(contractHound.price.c as number[])[0]} mutez
+                &nbsp; On sale for {(contractHound.price.c as number[])[0] / 1_000_000} ꜩ 
               </div>
             );
           } else {
