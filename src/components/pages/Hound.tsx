@@ -96,7 +96,7 @@ function Hound(): JSX.Element {
           <br />
           <div className="houndInfo__field">Mood: {houndInfo.stats.mood}</div>
           <div className="houndInfo__field">Affiliation: {houndInfo.stats.moon} moon</div>
-          <div className="houndInfo__field">Spriti Animal: {houndInfo.stats.spiritAnimal}</div>
+          <div className="houndInfo__field">Spirit Animal: {houndInfo.stats.spiritAnimal}</div>
         </div>
       </div>
 
