@@ -91,7 +91,7 @@ function HoundList({
   const fetchHounds = async (address: string) => {
     const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
     const houndList: HoundList = Array.from(houndMap)
-      .filter(([, hound]) => hound.creator == address)
+      .filter(([, hound]) => hound.owner == address)
       .map(([id, hound]) => ({
         id: id.substring(1, id.length - 1),
         houndInfo: houndInfoFromGenome(hound.genome),

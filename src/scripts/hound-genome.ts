@@ -43,6 +43,7 @@ export type HoundInfo = {
 
 export type ContractHound = {
   creator: string;
+  owner: string;
   genome: string;
   onSale: boolean;
   price: BigNumber;

@@ -87,7 +87,9 @@ function HoundLabel({
         <div className="houndLabel__info__gen">Gen {info.generation} </div>
         <div className="houndLabel__info__rarity">{info.rarity}</div>
         {price && price.c && price.c[0] >= 0 ? (
-          <div className="houndLabel__info__price">Price: {price.c[0]} ꜩ</div>
+          <div style={{ color: "var(--clr-faded)" }}>
+            {price.c[0] / 1_000_000} <span style={{ fontSize: "16px", fontWeight: "bold" }}>ꜩ</span>{" "}
+          </div>
         ) : null}
         <div className="houndLabel__info__profile" onClick={() => history.push(`/hound/${id}`)}>
           {genome.length >= maxGenomeLen ? genome.substring(0, maxGenomeLen) + "..." : genome}

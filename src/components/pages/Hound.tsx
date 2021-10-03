@@ -38,7 +38,7 @@ function Hound(): JSX.Element {
   const sellHound = async () => {
     const houndId = parseInt(id);
     if (!priceRef.current) return;
-    const price = parseInt(priceRef.current?.value);
+    const price = parseFloat(priceRef.current?.value);
 
     const contract = tzContext.contract;
     if (!contract) {
@@ -51,6 +51,20 @@ function Hound(): JSX.Element {
 
     // Reload the contract storage since we added a new hound to the `market` list.
     await tzContext.loadContract();
+  };
+
+  const purchaseHound = async () => {
+    const houndId = parseInt(id);
+    const { contract } = tzContext;
+    if (!contract) {
+      return;
+    }
+
+    const op = await contract.methods
+      .buy(houndId)
+      .send({ amount: (contractHound.price.c as number[])[0] });
+
+    await op.confirmation();
   };
 
   useEffect(() => {
@@ -89,29 +103,32 @@ function Hound(): JSX.Element {
       </div>
 
       {(() => {
-        if (walletInfo.userAddress == contractHound.creator ) {
+        if (walletInfo.userAddress == contractHound.creator) {
           if (contractHound.onSale) {
-            return <div className="houndInfo__onSale">
-              &nbsp; On sale for {(contractHound.price.c as number[])[0]} mutez
-            </div>;
+            return (
+              <div className="houndInfo__onSale">
+                &nbsp; On sale for {(contractHound.price.c as number[])[0]} mutez
+              </div>
+            );
           } else {
-          return (
-            <div className="houndInfo__sell" style={{ textAlign: "left", marginTop: "2rem" }}>
-              <input type="number" name="price" className="numberInput" ref={priceRef} />
-              &nbsp; &nbsp;
-              <Button onClick={sellHound}>Sell</Button>
-            </div>
-          );
+            return (
+              <div className="houndInfo__sell" style={{ textAlign: "left", marginTop: "2rem" }}>
+                <input type="number" name="price" className="numberInput" ref={priceRef} />
+                &nbsp; &nbsp;
+                <Button onClick={sellHound}>Sell</Button>
+              </div>
+            );
           }
         }
 
         if (walletInfo.userAddress != contractHound.creator && contractHound.onSale) {
           return (
             <div className="houndInf__buy">
-              <Button onClick={sellHound}>Sell</Button>
+              <Button onClick={purchaseHound}> Buy</Button>
             </div>
           );
         }
+
         return null;
       })()}
     </div>
