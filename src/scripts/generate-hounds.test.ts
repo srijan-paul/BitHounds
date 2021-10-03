@@ -3,11 +3,6 @@ import { decodeBase62Quadlet } from "./hound-genome";
 
 describe("Map quadlet to asset index", () => {
   it("can map quadlet values to indices correctly", () => {
-    const maxQuadlet = decodeBase62Quadlet("ZZZZ");
-    expect(genomeNumberToImageIndex(maxQuadlet / 5)).toBe(1);
-  });
-
-  it("rejects bad numbers", () => {
-    expect(() => genomeNumberToImageIndex(decodeBase62Quadlet("ZZZZ") + 10)).toThrow();
+    expect(genomeNumberToImageIndex(0)).toBe(0);
   });
 });
