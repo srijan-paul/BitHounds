@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Search from "./components/pages/Search";
 import Hound from "./components/pages/Hound";
+import Market from "./components/pages/Market";
 
 function App(): JSX.Element {
   // const tzContext = React.useContext(TzContext);
@@ -39,6 +40,10 @@ function App(): JSX.Element {
 
           <Route path="/hound/:id">
             <Hound />
+          </Route>
+
+          <Route path="/market/">
+            <Market />
           </Route>
         </Switch>
       </BrowserRouter>

@@ -7,6 +7,7 @@ import {
   animals,
   colors,
 } from "unique-names-generator";
+import { BigNumber } from "bignumber.js";
 
 // maps a Hound's feature to it's corresponding number in the Genome.
 // eg: mouth -> 1202
@@ -43,7 +44,8 @@ export type HoundInfo = {
 export type ContractHound = {
   creator: string;
   genome: string;
-  isNew: boolean;
+  onSale: boolean;
+  price: BigNumber;
 };
 
 const isUpper = (code: number) => code >= 65 && code <= 90;

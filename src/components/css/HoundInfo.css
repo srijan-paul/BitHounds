@@ -35,3 +35,11 @@
 .houndInfo__field {
   font-size: 1rem;
 }
+
+.houndInfo__onSale {
+  color: var(--clr-faded);
+  font-size: large;
+  text-align: left;
+  margin-top: 0.5rem;
+}
+
