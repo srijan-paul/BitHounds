@@ -60,6 +60,15 @@ p {
   border: 1px solid var(--sig-color-1);
 }
 
+.link {
+  color: var(--sig-color-1);
+}
+
+.link:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 @media only screen and (max-width: 650px) {
   body {
     font-size: 1rem;

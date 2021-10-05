@@ -7,6 +7,7 @@ import "../css/HoundInfo.css";
 import { TzContext } from "../context/TzToolKitContext";
 import Button from "../Button";
 import { WalletContext } from "../context/WalletContext";
+import { useHistory } from "react-router";
 
 const CanvasWidth = 200,
   CanvasHeight = 200;
@@ -73,6 +74,12 @@ function Hound(): JSX.Element {
       .catch(console.error);
   }, []);
 
+  const owner = contractHound.owner;
+  const ownerAddress = owner.length <= 12 ? owner : owner.substring(0, 10) + "...";
+  // const genome = houndInfo.genome.substring(0, 9) + "...";
+
+  const history = useHistory();
+
   return (
     <div className="houndInfo">
       <div className="houndInfo__wrapper">
@@ -100,6 +107,9 @@ function Hound(): JSX.Element {
           <div className="houndInfo__field">Mood: {houndInfo.stats.mood}</div>
           <div className="houndInfo__field">Affiliation: {houndInfo.stats.moon} moon</div>
           <div className="houndInfo__field">Spirit Animal: {houndInfo.stats.spiritAnimal}</div>
+          <div className="houndInfo__field">Owner: <span className="link" onClick={() => {
+            history.push(`/usr/${owner}`);
+          }}> {ownerAddress} </span> </div>
         </div>
       </div>
 
