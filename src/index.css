@@ -55,7 +55,8 @@ p {
   padding: 8px 20px;
 }
 
-.numberInput:active, .numberInput:focus {
+.numberInput:active,
+.numberInput:focus {
   border: 1px solid var(--sig-color-1);
 }
 
