@@ -125,6 +125,7 @@ function Hound(): JSX.Element {
         if (walletInfo.userAddress != contractHound.creator && contractHound.onSale) {
           return (
             <div className="houndInfo__buy">
+              <br />
               <Button onClick={purchaseHound}> Buy</Button>
             </div>
           );
