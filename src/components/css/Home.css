@@ -90,6 +90,30 @@
   margin: auto;
 }
 
+.Actions {
+  font-family: "Rubik";
+  width: 60%;
+  margin: auto;
+  margin-bottom: 2rem;
+}
+
+.Actions__wrapper {
+  font-size: 1.15rem;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.Actions__btn {
+  width: 100%;
+  margin: auto;
+  text-align: center;
+}
+
+li {
+  margin-bottom: 1rem;
+  color: var(--clr-faded);
+}
+
 @media only screen and (max-width: 900px) {
   .about {
     flex-direction: column;

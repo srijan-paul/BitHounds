@@ -1,4 +1,5 @@
 import { AssertionError } from "assert";
+import { TzContext } from "../components/context/TzToolKitContext";
 // Returns a random integer
 export function randInt(lo: number, hi: number): number {
   return Math.floor(lo + Math.random() * hi);
@@ -29,4 +30,22 @@ export function randomBase62(len: number): string {
   }
 
   return res;
+}
+
+export function shortString(str: string, limit = 20): string {
+  if (str.length < limit) return str;
+  return str.substring(0, limit - 3) + "...";
+}
+
+export async function buyHound(tzContext: TzContext, genome: string): Promise<void> {
+  try {
+    const contract = tzContext.contract;
+    if (!contract) return;
+
+    const op = await contract.methods.createHound(3, genome, 0).send();
+    await op.confirmation();
+    await tzContext.loadContract();
+  } catch (error) {
+    console.error(error);
+  }
 }

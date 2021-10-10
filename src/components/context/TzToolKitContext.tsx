@@ -1,10 +1,13 @@
 import React from "react";
-import { TezosToolkit } from "@taquito/taquito";
+import { ContractAbstraction, TezosToolkit, Wallet } from "@taquito/taquito";
 import PropTypes from "prop-types";
 
-type TzContext = {
+export type TzContext = {
   toolkit: TezosToolkit;
   setToolkit: (tk: TezosToolkit) => void;
+  contract: ContractAbstraction<Wallet> | null;
+  loadContract: () => Promise<void>;
+  contractStorage: any;
 };
 
 const defaultContext: TzContext = {
@@ -12,6 +15,13 @@ const defaultContext: TzContext = {
   setToolkit(tk) {
     this.toolkit = tk;
   },
+  contract: null,
+  contractStorage: null,
+  async loadContract() {
+    const wallet = this.toolkit.wallet;
+    this.contract = await wallet.at("KT1TJMp3voDJ5WV97AA5k6RvZRjLQ3QQXTqp");
+    this.contractStorage = await this.contract.storage();
+  }
 };
 
 export const TzContext = React.createContext<TzContext>(defaultContext);

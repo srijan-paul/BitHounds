@@ -7,7 +7,6 @@ import "../css/Home.css";
 import { SVGSlantTop, SVGSlantBottom } from "../svgs";
 import { Link } from "react-router-dom";
 import { WalletContext } from "../context/WalletContext";
-import Actions from "../Actions";
 
 function ConnectWallet() {
   const [Tezos] = useState<TezosToolkit>(new TezosToolkit("https://api.tez.ie/rpc/granadanet"));
@@ -59,7 +58,7 @@ function Hero() {
       </div>
 
       <div className="hero__buttons">
-        <ConnectWallet/>
+        <ConnectWallet />
         <PlayButton />
       </div>
     </div>
@@ -129,6 +128,40 @@ function AboutGame() {
             engage with the community!
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function Actions(): JSX.Element {
+  return (
+    <div className="Actions">
+      <div className="Actions__wrapper">
+        <ul
+          className="Actions__left"
+          style={{
+            listStyle: "none",
+          }}
+        >
+          <li>✨ Stake XTZ to breed hounds, build your own collection!</li>
+          <li>💰&nbsp;Buy and sell hounds in the marketplace.</li>
+        </ul>
+
+        <ul
+          className="Actions__right"
+          style={{
+            listStyle: "none",
+          }}
+        >
+          <li>🔥 &nbsp;Breed to get rare and mythical hounds!</li>
+          <li>🎃 Unlock rare traits</li>
+        </ul>
+      </div>
+
+      <br />
+
+      <div className="Actions__btn">
+        <Button>Tell me how!</Button>
       </div>
     </div>
   );
