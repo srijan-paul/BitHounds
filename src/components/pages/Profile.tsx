@@ -154,6 +154,7 @@ function BreedSection({
 }): JSX.Element {
   const breedingInfo = React.useContext(BreedInfoContext);
   const tzContext = React.useContext(TzContext);
+  const userAddress = React.useContext(WalletContext).userAddress;
 
   return (
     <div className="breedSection">
@@ -201,7 +202,7 @@ function BreedSection({
               parent2.houndInfo.genome
             );
             breedingInfo.setChildGenome(crossedGenome);
-            await buyHound(tzContext, crossedGenome);
+            await buyHound(tzContext, crossedGenome, userAddress);
           }}
         >
           Breed

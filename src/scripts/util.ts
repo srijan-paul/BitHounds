@@ -1,5 +1,7 @@
 import { AssertionError } from "assert";
+import { useContext } from "react";
 import { TzContext } from "../components/context/TzToolKitContext";
+import { WalletContext } from "../components/context/WalletContext";
 // Returns a random integer
 export function randInt(lo: number, hi: number): number {
   return Math.floor(lo + Math.random() * hi);
@@ -37,12 +39,23 @@ export function shortString(str: string, limit = 20): string {
   return str.substring(0, limit - 3) + "...";
 }
 
-export async function buyHound(tzContext: TzContext, genome: string): Promise<void> {
+function stringToHex(string: string) {
+  let result = "";
+    for (let i=0; i<string.length; i++) {
+      result += string.charCodeAt(i).toString(16);
+    }
+    return result;
+}
+
+export async function buyHound(tzContext: TzContext, genome: string, userAddress: string): Promise<void> {
   try {
     const contract = tzContext.contract;
     if (!contract) return;
-
-    const op = await contract.methods.createHound(3, genome, 0).send();
+    const response = await fetch(`http://localhost:8080/mint?creator=${userAddress}&genome=${genome}`, {method: "POST"});
+    const json = await response.json();
+    console.log(typeof(json.msg.metadataHash));
+    console.log("0x"+stringToHex(json.msg.metadataHash));
+    const op = await contract.methods.createHound(3, genome,"0x"+stringToHex("ipfs://"+json.msg.metadataHash),0).send();
     await op.confirmation();
     await tzContext.loadContract();
   } catch (error) {
