@@ -18,21 +18,23 @@ function NavItem(props: { name: string; link?: string; children: PropTypes.React
 function Navbar(): JSX.Element {
   return (
     <div className="navbar">
-      <NavItem name="HoundPedia">
-        <Dog size="35px" />
-      </NavItem>
+      <div className="navbar__items">
+        <NavItem name="HoundPedia">
+          <Dog size="35px" />
+        </NavItem>
 
-      <NavItem name="Book">
-        <Book size="30px" />
-      </NavItem>
+        <NavItem name="Book" link="/market">
+          <Book size="30px" />
+        </NavItem>
 
-      <NavItem name="Source">
-        <Code size="30px" />
-      </NavItem>
+        <NavItem name="Source">
+          <Code size="30px" />
+        </NavItem>
 
-      <NavItem name="People" link="/search">
-        <User size="35px" />
-      </NavItem>
+        <NavItem name="People" link="/search">
+          <User size="35px" />
+        </NavItem>
+      </div>
     </div>
   );
 }

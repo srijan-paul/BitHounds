@@ -29,3 +29,13 @@
 .houndLabel__info {
   font-size: 0.9rem;
 }
+
+.houndLabel__info__profile {
+  color: var(--sig-color-1);
+  font-size: 0.8rem;  
+}
+
+.houndLabel__info__profile:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
