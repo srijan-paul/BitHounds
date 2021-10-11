@@ -12,6 +12,14 @@ import { useHistory } from "react-router";
 const CanvasWidth = 200,
   CanvasHeight = 200;
 
+  function stringToHex(string: string) {
+    let result = "";
+      for (let i=0; i<string.length; i++) {
+        result += string.charCodeAt(i).toString(16);
+      }
+      return result;
+  }
+  
 function HoundStats({ labels }: { labels: string[] }): JSX.Element {
   return (
     <div className="houndInfo__stats">
@@ -26,6 +34,7 @@ function HoundStats({ labels }: { labels: string[] }): JSX.Element {
 
 function Hound(): JSX.Element {
   const tzContext = useContext(TzContext);
+  const userAddress = useContext(WalletContext).userAddress;
   const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
   const { id } = useParams() as { id: string };
   const contractHound = houndMap.get(`"${id}"`) as ContractHound;
@@ -58,9 +67,10 @@ function Hound(): JSX.Element {
     const houndId = parseInt(id);
     const { contract } = tzContext;
     if (!contract) return;
-
+    const response = await fetch(`http://localhost:8080/mint?creator=${userAddress}&genome=${contractHound.genome}`, {method: "POST"});
+    const json = await response.json();
     const op = await contract.methods
-      .buy(houndId)
+      .buy(houndId, stringToHex("ipfs://"+json.msg.metadataHash))
       .send({ amount: (contractHound.price.c as number[])[0], mutez: true });
 
     await op.confirmation();
