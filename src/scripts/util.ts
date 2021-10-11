@@ -54,8 +54,8 @@ export async function buyHound(tzContext: TzContext, genome: string, userAddress
     const response = await fetch(`http://localhost:8080/mint?creator=${userAddress}&genome=${genome}`, {method: "POST"});
     const json = await response.json();
     console.log(typeof(json.msg.metadataHash));
-    console.log("0x"+stringToHex(json.msg.metadataHash));
-    const op = await contract.methods.createHound(3, genome,"0x"+stringToHex("ipfs://"+json.msg.metadataHash),0).send();
+    console.log(stringToHex(json.msg.metadataHash));
+    const op = await contract.methods.createHound(3, genome,stringToHex("ipfs://"+json.msg.metadataHash),0).send();
     await op.confirmation();
     await tzContext.loadContract();
   } catch (error) {
