@@ -63,38 +63,33 @@ app.post("/mint", async (req, res) => {
   const { genome, creator } = req.body;
   try {
     if (!genome) {
-      res.status(400).json({ status: false, msg: "Invalid genome" });
-    } else {
-      const partNames = ["base", "eyes", "mouth", "horn"];
-      const genomeFeatures = decodeGenome(genome);
-      const images = [];
-      partNames.forEach((name) => {
-        const partIdx = genomeNumberToImageIndex(genomeFeatures[name]) + 1;
-        images.push(`../public/assets/parts/${name}-${partIdx}.png`);
-      });
-
-      sharp(images[0])
-        .composite([{ input: images[1] }])
-        .toFile("part1.png", (err) => {
-          if (err) console.error("error: ", err);
-
-          sharp(images[2])
-            .composite([{ input: images[3] }])
-            .toFile("part2.png", (err) => {
-              if (err) console.error(err);
-
-              sharp("part1.png")
-                .composite([{ input: "part2.png" }])
-                .toFile("output.png", (err) => {
-                  if (err) console.error("error: ", err);
-
-                  usePinata(creator, res);
-                });
-            });
-        });
+      return res.status(400).json({ status: false, msg: "Invalid genome" });
     }
+
+    const partNames = ["base", "eyes", "mouth", "horn"];
+    const genomeFeatures = decodeGenome(genome);
+    const images = [];
+    partNames.forEach((name) => {
+      const partIdx = genomeNumberToImageIndex(genomeFeatures[name]) + 1;
+      images.push(`../public/assets/parts/${name}-${partIdx}.png`);
+    });
+
+    await sharp(images[0])
+      .composite([{ input: images[1] }])
+      .toFile("part1.png");
+
+    await sharp(images[2])
+      .composite([{ input: images[3] }])
+      .toFile("part2.png");
+
+    await sharp("part1.png")
+      .composite([{ input: "part2.png" }])
+      .toFile("output.png");
+
+    usePinata(creator, res);
   } catch (e) {
-    console.log(e);
+    console.error(e);
+    res.statusEnd(500);
   }
 });
 
@@ -110,42 +105,43 @@ async function usePinata(creator, res) {
       },
     },
   };
-  const pinnedFile = await pinata.pinFileToIPFS(readableStreamForFile, options);
-  if (pinnedFile.IpfsHash && pinnedFile.PinSize > 0) {
-    fs.unlinkSync(`${fileName}`);
-    const metadata = {
-      name: "Hound NFT",
-      description: "Playable Trading Cards",
-      symbol: "Hound NFT",
-      artifactUri: `ipfs://${pinnedFile.IpfsHash}`,
-      displayUri: `ipfs://${pinnedFile.IpfsHash}`,
-      creators: [creator],
-      decimals: 0,
-      thumbnailUri: `ipfs://${pinnedFile.IpfsHash}`,
-      is_transferable: true,
-      shouldPreferSymbol: false,
-    };
 
-    const pinnedMetadata = await pinata.pinJSONToIPFS(metadata, {
-      pinataMetadata: {
-        name: "NFT-Metadata",
+  const pinnedFile = await pinata.pinFileToIPFS(readableStreamForFile, options);
+
+  if (!pinnedFile.IpfsHash || pinnedFile.PinSize <= 0)
+    return res.status(500).json({ status: false, msg: "file was not pinned" });
+
+  fs.unlinkSync(`${fileName}`);
+  const metadata = {
+    name: "Hound NFT",
+    description: "Playable Trading Cards",
+    symbol: "Hound NFT",
+    artifactUri: `ipfs://${pinnedFile.IpfsHash}`,
+    displayUri: `ipfs://${pinnedFile.IpfsHash}`,
+    creators: [creator],
+    decimals: 0,
+    thumbnailUri: `ipfs://${pinnedFile.IpfsHash}`,
+    is_transferable: true,
+    shouldPreferSymbol: false,
+  };
+
+  const pinnedMetadata = await pinata.pinJSONToIPFS(metadata, {
+    pinataMetadata: {
+      name: "NFT-Metadata",
+    },
+  });
+
+  if (pinnedMetadata.IpfsHash && pinnedMetadata.PinSize > 0) {
+    return res.status(200).json({
+      status: true,
+      msg: {
+        imageHash: pinnedFile.IpfsHash,
+        metadataHash: pinnedMetadata.IpfsHash,
       },
     });
-
-    if (pinnedMetadata.IpfsHash && pinnedMetadata.PinSize > 0) {
-      res.status(200).json({
-        status: true,
-        msg: {
-          imageHash: pinnedFile.IpfsHash,
-          metadataHash: pinnedMetadata.IpfsHash,
-        },
-      });
-    } else {
-      res.status(500).json({ status: false, msg: "metadata were not pinned" });
-    }
-  } else {
-    res.status(500).json({ status: false, msg: "file was not pinned" });
   }
+
+  res.status(500).json({ status: false, msg: "metadata were not pinned" });
 }
 
 app.listen(port, () => {
