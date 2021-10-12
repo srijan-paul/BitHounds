@@ -1,16 +1,18 @@
-import express from "express";
-import pinataSDK from "@pinata/sdk";
-import fs from "fs";
-import cors from "cors";
-import sharp from "sharp";
+const express = require("express");
+const pinataSDK = require("@pinata/sdk");
+const fs = require("fs");
+const cors = require("cors");
+const sharp = require("sharp");
+const pinataSecret = require("./pinata_secret.json");
+
 sharp.cache(false);
 
 const app = express();
 const port = 8080;
-const pinata = pinataSDK("84804ab6ad3f0690267e", "5965f50ef481aa3972c6202d6b1ef572ec06b293b8e121fc1a838ae85c9d8d26");
+const pinata = pinataSDK(pinataSecret.apiKey, pinataSecret.secret);
 const MaxTextureCount = 5;
 
-function decodeBase62Quadlet(quadlet){
+function decodeBase62Quadlet(quadlet) {
   const isUpper = (code) => code >= 65 && code <= 90;
   const isLower = (code) => code >= 97 && code <= 122;
 
@@ -50,18 +52,18 @@ function genomeNumberToImageIndex(featureNumber) {
 const corsOptions = {
   origin: ["http://localhost:3000"],
   optionsSuccessStatus: 200,
-  methods: ["POST"]
+  methods: ["POST"],
 };
+
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "50mb" }));
-app.use(
-  express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 })
-);
+app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 50000 }));
+
 app.post("/mint", async (req, res) => {
+  const { genome, creator } = req.body;
   try {
-    const genome = req.query.genome;
     if (!genome) {
-      res.status(500).json({ status: false, msg: "no file provided" });
+      res.status(400).json({ status: false, msg: "Invalid genome" });
     } else {
       const partNames = ["base", "eyes", "mouth", "horn"];
       const genomeFeatures = decodeGenome(genome);
@@ -70,52 +72,45 @@ app.post("/mint", async (req, res) => {
         const partIdx = genomeNumberToImageIndex(genomeFeatures[name]) + 1;
         images.push(`../public/assets/parts/${name}-${partIdx}.png`);
       });
+
       sharp(images[0])
-        .composite([{ 
-          input: images[1]
-        }])
-        .toFile("part1.png", function(err) {
-          console.log("error: ", err);
+        .composite([{ input: images[1] }])
+        .toFile("part1.png", (err) => {
+          if (err) console.error("error: ", err);
+
           sharp(images[2])
-            .composite([{ 
-              input: images[3]
-            }])
-            .toFile("part2.png", function(err) {
-              console.log("error: ", err);
+            .composite([{ input: images[3] }])
+            .toFile("part2.png", (err) => {
+              if (err) console.error(err);
+
               sharp("part1.png")
-                .composite([{ 
-                  input: "part2.png"
-                }])
-                .toFile("output.png", function(err) {
-                  console.log("error: ", err);
-                  usePinata(req,res);
+                .composite([{ input: "part2.png" }])
+                .toFile("output.png", (err) => {
+                  if (err) console.error("error: ", err);
+
+                  usePinata(creator, res);
                 });
             });
         });
     }
-  } catch(e) {
+  } catch (e) {
     console.log(e);
   }
 });
 
-async function usePinata(req,res) {
+async function usePinata(creator, res) {
   const fileName = "output.png";
-  await pinata
-    .testAuthentication()
-    .catch((err) => res.status(500).json(JSON.stringify(err)));
+  await pinata.testAuthentication().catch((err) => res.status(500).json(JSON.stringify(err)));
   const readableStreamForFile = fs.createReadStream(`${fileName}`);
-  const options= {
+  const options = {
     pinataMetadata: {
       name: "Houd NFT",
       keyvalues: {
-        description: "Image of Hound"
-      }
-    }
+        description: "Image of Hound",
+      },
+    },
   };
-  const pinnedFile = await pinata.pinFileToIPFS(
-    readableStreamForFile,
-    options
-  );
+  const pinnedFile = await pinata.pinFileToIPFS(readableStreamForFile, options);
   if (pinnedFile.IpfsHash && pinnedFile.PinSize > 0) {
     fs.unlinkSync(`${fileName}`);
     const metadata = {
@@ -124,17 +119,17 @@ async function usePinata(req,res) {
       symbol: "Hound NFT",
       artifactUri: `ipfs://${pinnedFile.IpfsHash}`,
       displayUri: `ipfs://${pinnedFile.IpfsHash}`,
-      creators: [req.query.creator],
+      creators: [creator],
       decimals: 0,
       thumbnailUri: `ipfs://${pinnedFile.IpfsHash}`,
       is_transferable: true,
-      shouldPreferSymbol: false
+      shouldPreferSymbol: false,
     };
 
     const pinnedMetadata = await pinata.pinJSONToIPFS(metadata, {
       pinataMetadata: {
-        name: "NFT-Metadata"
-      }
+        name: "NFT-Metadata",
+      },
     });
 
     if (pinnedMetadata.IpfsHash && pinnedMetadata.PinSize > 0) {
@@ -142,18 +137,17 @@ async function usePinata(req,res) {
         status: true,
         msg: {
           imageHash: pinnedFile.IpfsHash,
-          metadataHash: pinnedMetadata.IpfsHash
-        }
+          metadataHash: pinnedMetadata.IpfsHash,
+        },
       });
     } else {
-      res
-        .status(500)
-        .json({ status: false, msg: "metadata were not pinned" });
+      res.status(500).json({ status: false, msg: "metadata were not pinned" });
     }
   } else {
     res.status(500).json({ status: false, msg: "file was not pinned" });
   }
 }
+
 app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });

@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "node": true
   },
   "extends": [
     "eslint:recommended",
@@ -25,6 +26,6 @@
     "eol-last": ["warn", "always"],
     "arrow-parens": ["warn", "always"],
     "func-style": ["off", "declaration"],
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
   }
 }
