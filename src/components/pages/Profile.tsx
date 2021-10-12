@@ -94,7 +94,7 @@ function HoundList({
       .filter(([, hound]) => hound.owner == address)
       .map(([id, hound]) => ({
         id: id.substring(1, id.length - 1),
-        houndInfo: houndInfoFromGenome(hound.genome),
+        houndInfo: houndInfoFromGenome(hound.genome, hound.generation),
       }));
 
     setHounds(houndList);

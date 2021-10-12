@@ -19,7 +19,7 @@ function HoundList(): JSX.Element {
   const houndList = Array.from(mapOfHoundsOnSale).map(([id, contractHound]) => {
     return {
       id: id.substring(1, id.length - 1),
-      hound: houndInfoFromGenome(contractHound.genome),
+      hound: houndInfoFromGenome(contractHound.genome, contractHound.generation),
       price: contractHound.price,
     };
   });

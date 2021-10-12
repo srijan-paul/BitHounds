@@ -38,7 +38,7 @@ function Hound(): JSX.Element {
   const houndMap: Map<string, ContractHound> = tzContext.contractStorage.hounds.valueMap;
   const { id } = useParams() as { id: string };
   const contractHound = houndMap.get(`"${id}"`) as ContractHound;
-  const houndInfo = houndInfoFromGenome(contractHound.genome);
+  const houndInfo = houndInfoFromGenome(contractHound.genome, contractHound.generation);
   const priceRef = React.useRef<HTMLInputElement>(null);
 
   const walletInfo = useContext(WalletContext);

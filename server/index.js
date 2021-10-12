@@ -62,7 +62,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true, parameterLimit: 5000
 app.post("/mint", async (req, res) => {
   const { genome, creator } = req.body;
   try {
-    if (!genome) {
+    if (!(genome && creator)) {
       return res.status(400).json({ status: false, msg: "Invalid genome" });
     }
 
