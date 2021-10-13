@@ -23,7 +23,7 @@ function Navbar(): JSX.Element {
           <Dog size="35px" />
         </NavItem>
 
-        <NavItem name="Book" link="/market">
+        <NavItem name="Market" link="/market">
           <Book size="30px" />
         </NavItem>
 

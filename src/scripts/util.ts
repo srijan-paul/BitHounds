@@ -65,7 +65,7 @@ export async function buyHound(
     console.log(typeof json.msg.metadataHash);
     console.log(stringToHex(json.msg.metadataHash));
     const op = await contract.methods
-      .createHound(3, genome, stringToHex("ipfs://" + json.msg.metadataHash), 0)
+      .createHound(0, genome, stringToHex("ipfs://" + json.msg.metadataHash), 0)
       .send();
     await op.confirmation();
     await tzContext.loadContract();

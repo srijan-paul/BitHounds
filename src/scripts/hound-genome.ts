@@ -116,7 +116,7 @@ export function houndInfoFromGenome(genome: string, generation: BigNumber): Houn
   };
 
   const spiritAnimal = uniqueNamesGenerator(config);
-  const traits = Array.from(featureIds).map((char) => {
+  const traits = Array.from(featureIds.substring(0, featureIds.length - 1)).map((char) => {
     const conf: Config = {
       dictionaries: [adjectives],
       seed: base62CharToBase10Int(char),
@@ -138,12 +138,25 @@ export function houndInfoFromGenome(genome: string, generation: BigNumber): Houn
 
   const name = uniqueNamesGenerator(nameConfig);
 
+  const rarity = (() => {
+    const n = base62ToBase10(genome.charCodeAt(genome.length - 1));
+    if (n < 30) {
+      return HoundRarity.COMMON;
+    } else if (n < 40) {
+      return HoundRarity.RARE;
+    } else if (n < 50) {
+      return HoundRarity.UNCOMMON;
+    } else {
+      return HoundRarity.MYTHICAL;
+    }
+  })();
+
   return {
     stats,
     generation: generation.c ? generation.c[0] : 1,
     id: Math.floor(2000 + Math.random() * 1000),
     genome,
-    rarity: HoundRarity.COMMON,
+    rarity,
     name,
   };
 }
