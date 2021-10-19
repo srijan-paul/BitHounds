@@ -26,6 +26,7 @@
     "eol-last": ["warn", "always"],
     "arrow-parens": ["warn", "always"],
     "func-style": ["off", "declaration"],
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-var-requires": "off"
   }
 }
