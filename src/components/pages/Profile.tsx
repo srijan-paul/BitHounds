@@ -94,7 +94,7 @@ function HoundList({
       .filter(([, hound]) => hound.owner == address)
       .map(([id, hound]) => ({
         id: id.substring(1, id.length - 1),
-        houndInfo: houndInfoFromGenome(hound.genome),
+        houndInfo: houndInfoFromGenome(hound.genome, hound.generation),
       }));
 
     setHounds(houndList);
@@ -154,6 +154,7 @@ function BreedSection({
 }): JSX.Element {
   const breedingInfo = React.useContext(BreedInfoContext);
   const tzContext = React.useContext(TzContext);
+  const userAddress = React.useContext(WalletContext).userAddress;
 
   return (
     <div className="breedSection">
@@ -201,7 +202,7 @@ function BreedSection({
               parent2.houndInfo.genome
             );
             breedingInfo.setChildGenome(crossedGenome);
-            await buyHound(tzContext, crossedGenome);
+            await buyHound(tzContext, crossedGenome, userAddress);
           }}
         >
           Breed

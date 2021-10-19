@@ -47,6 +47,7 @@ export type ContractHound = {
   genome: string;
   onSale: boolean;
   price: BigNumber;
+  generation: BigNumber;
 };
 
 const isUpper = (code: number) => code >= 65 && code <= 90;
@@ -102,7 +103,7 @@ export function breedHoundGenomes(parentA: string, parentB: string): string {
 
 export const Moods: mood[] = ["cool", "angry", "calm", "funky", "tired"];
 export const Moons: moon[] = ["sanguine", "blood", "twilight"];
-export function houndInfoFromGenome(genome: string): HoundInfo {
+export function houndInfoFromGenome(genome: string, generation: BigNumber): HoundInfo {
   assert(isGenomeValid(genome));
   const featureIds = genome.substring(6, 10);
   const mood = Moods[featureIds.charCodeAt(0) % Moods.length];
@@ -115,7 +116,7 @@ export function houndInfoFromGenome(genome: string): HoundInfo {
   };
 
   const spiritAnimal = uniqueNamesGenerator(config);
-  const traits = Array.from(featureIds).map((char) => {
+  const traits = Array.from(featureIds.substring(0, featureIds.length - 1)).map((char) => {
     const conf: Config = {
       dictionaries: [adjectives],
       seed: base62CharToBase10Int(char),
@@ -137,12 +138,25 @@ export function houndInfoFromGenome(genome: string): HoundInfo {
 
   const name = uniqueNamesGenerator(nameConfig);
 
+  const rarity = (() => {
+    const n = base62ToBase10(genome.charCodeAt(genome.length - 1));
+    if (n < 30) {
+      return HoundRarity.COMMON;
+    } else if (n < 40) {
+      return HoundRarity.RARE;
+    } else if (n < 50) {
+      return HoundRarity.UNCOMMON;
+    } else {
+      return HoundRarity.MYTHICAL;
+    }
+  })();
+
   return {
     stats,
-    generation: 0,
+    generation: generation.c ? generation.c[0] : 1,
     id: Math.floor(2000 + Math.random() * 1000),
     genome,
-    rarity: HoundRarity.COMMON,
+    rarity,
     name,
   };
 }

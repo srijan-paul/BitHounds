@@ -37,12 +37,36 @@ export function shortString(str: string, limit = 20): string {
   return str.substring(0, limit - 3) + "...";
 }
 
-export async function buyHound(tzContext: TzContext, genome: string): Promise<void> {
+function stringToHex(string: string) {
+  let result = "";
+  for (let i = 0; i < string.length; i++) {
+    result += string.charCodeAt(i).toString(16);
+  }
+  return result;
+}
+
+export async function buyHound(
+  tzContext: TzContext,
+  genome: string,
+  userAddress: string
+): Promise<void> {
   try {
     const contract = tzContext.contract;
     if (!contract) return;
-
-    const op = await contract.methods.createHound(3, genome, 0).send();
+    const response = await fetch(
+      `http://localhost:8080/mint?creator=${userAddress}&genome=${genome}`,
+      {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ genome, creator: userAddress }),
+      }
+    );
+    const json = await response.json();
+    console.log(typeof json.msg.metadataHash);
+    console.log(stringToHex(json.msg.metadataHash));
+    const op = await contract.methods
+      .createHound(4, genome, stringToHex("ipfs://" + json.msg.metadataHash), 0)
+      .send();
     await op.confirmation();
     await tzContext.loadContract();
   } catch (error) {
